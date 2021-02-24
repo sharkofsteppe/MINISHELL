@@ -1,32 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.c                                        :+:      :+:    :+:   */
+/*   exec_exit.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/02/24 15:15:48 by gesperan          #+#    #+#             */
-/*   Updated: 2021/02/24 19:43:18 by ezachari         ###   ########.fr       */
+/*   Created: 2021/02/24 17:56:52 by ezachari          #+#    #+#             */
+/*   Updated: 2021/02/24 18:39:00 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int		main(int argc, char **argv, char **env)
+int     exec_exit(t_all *all)
 {
-	t_all all;
-	char *line;
-	
-	all.env = env;
-	all.home = get_env("HOME", all.env);
-	while (1)
-	{
-		print_promt(&all);
-		get_next_line(0, &line);
-		all.cmd = ft_split(line, ';');
-		free(line);
-		exec_cmd(&all);
-		free_split(all.cmd);
-	}
-	return (0);
+    exit(0);
+    return (1);
 }
