@@ -6,7 +6,7 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 14:33:16 by gesperan          #+#    #+#             */
-/*   Updated: 2021/02/24 14:36:02 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/09 16:29:17 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,12 +26,31 @@
 # define EOF_REACHED 0
 # define ERROR -1
 # define BUFFER_SIZE 32
+# define SEMICOLON ';'
+
 
 typedef struct		s_list
 {
 	void			*content;
 	struct s_list	*next;
+	char			*cmd;
+	char			*non;
+	char			*opt;
+	char			**arg;
+	char			*rdr;
+	char			*in;
+	char			*out;
+	int				flag;
 }					t_list;
+
+
+
+typedef struct		s_pt
+{
+	char	*copy;
+	char	*fmt;
+	int		cut;
+}					t_pt;
 
 enum				e_errorlist
 {
@@ -106,5 +125,6 @@ int					ps_cub(char *s, int fd, int err);
 char				*ft_fillstr(char c, int len);
 int					size_arr(char **str);
 void				*ft_memory_free(char **str, size_t count);
-int					finder(const char *str, const char c);
+t_list				*ft_lstnew_pipe(void *content);
+
 #endif

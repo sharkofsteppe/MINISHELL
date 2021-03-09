@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_lstnew.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gesperan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/06 20:59:19 by gesperan          #+#    #+#             */
-/*   Updated: 2020/11/06 21:00:19 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/09 13:46:38 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,24 @@ t_list	*ft_lstnew(void *content)
 
 	if (!(new = (t_list*)malloc(sizeof(*new))))
 		return (NULL);
+	new->flag = 1;
+	new->opt = 0;
+	new->cmd = 0;
 	new->content = content;
+	new->next = NULL;
+	return (new);
+}
+
+t_list	*ft_lstnew_pipe(void *content)
+{
+	t_list	*new;
+
+	if (!(new = (t_list*)malloc(sizeof(*new))))
+		return (NULL);
+	new->content = content;
+	new->flag = 1;
+	new->opt = 0;
+	new->cmd = 0;
 	new->next = NULL;
 	return (new);
 }
