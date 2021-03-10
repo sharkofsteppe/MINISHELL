@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strjoin.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gesperan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/03 16:38:23 by gesperan          #+#    #+#             */
-/*   Updated: 2021/01/14 12:12:13 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/10 19:45:17 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,4 +39,33 @@ char	*ft_strjoin(char const *str1, char const *str2)
 	}
 	newstring[i] = '\0';
 	return (newstring);
+}
+
+char	*ft_joinsym(char *str, char c)
+{
+	size_t	i;
+	size_t	len;
+	char	*newstr;
+	if (str != 0)
+	{
+		len = ft_strlen(str);
+		// printf("|%zu|\n", len);
+	}
+	else
+		len = 0;
+	newstr = (char *)ft_calloc(sizeof(char), len + 2);
+	i = 0;
+	if (str != 0)
+	{
+		while (i < len)
+		{
+			newstr[i] = str[i];
+			i++;
+		}
+		printf("%zu\n", i);
+		newstr[i] = c;
+	}
+	else
+		newstr[i] = c;
+	return (newstr);
 }

@@ -6,7 +6,7 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 14:33:16 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/09 16:29:17 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/10 18:50:06 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ typedef struct		s_pt
 	char	*copy;
 	char	*fmt;
 	int		cut;
+	char	*storage;
 }					t_pt;
 
 enum				e_errorlist
@@ -126,5 +127,6 @@ char				*ft_fillstr(char c, int len);
 int					size_arr(char **str);
 void				*ft_memory_free(char **str, size_t count);
 t_list				*ft_lstnew_pipe(void *content);
+char				*ft_joinsym(char *str, char c);
 
 #endif

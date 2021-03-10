@@ -6,7 +6,7 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/24 15:15:48 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/09 17:05:27 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/10 19:43:21 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ t_pt	*init_ptr(void)
 	ptr->copy = 0;
 	ptr->fmt = 0;
 	ptr->cut = 0;
+	ptr->storage = 0;
 	return (ptr);
 }
 
@@ -43,6 +44,7 @@ void	pusher(int i, t_pt *p)
 	p->fmt += i;
 	p->cut += i;
 }
+
 
 
 void	squots(char **fmt, char c, int *flag)
@@ -244,6 +246,137 @@ int		analysis(char *line)
 }
 
 
+char	*compare(t_list *tmp, char *str, char *cstr)
+{
+	int	len;
+	int	i;
+
+	len = ft_strlen(cstr);
+	i = ft_strncmp(str, cstr, len);
+	if (i == 0)
+	{
+		tmp->cmd = ft_substr(str, 0, len - 1);
+		return (str + len);
+	}
+	return (str);
+}
+
+char	*submaker(t_list *tmp, char *str)
+{
+	int		i;
+	char	*begin;
+
+	begin = str;
+	i = 0;
+	while (ft_isalnum(*str))
+	{
+		str++;
+		i++;
+	}
+	tmp->cmd = ft_substr(begin, 0 , i);
+	return (str);
+}
+
+char	*wcomanda(t_list *tmp, char *str)
+{
+	str = compare(tmp, str, "echo ");
+	str = compare(tmp, str, "exit ");
+	str = compare(tmp, str, "cd ");
+	str = compare(tmp, str, "env ");
+	str = compare(tmp, str, "pwd ");
+	str = compare(tmp, str, "export ");
+	str = compare(tmp, str, "unset ");
+	if (tmp->cmd == 0)
+		str = submaker(tmp, str);
+	// printf("|%s|\n", str);
+	return (str);
+}
+// char	*extractargs(t_list *tmp, char *str, char c)
+// {
+// 	int i;
+// 	char *sub;
+
+// 	sub = str + 1;
+// 	i = 0;
+// 	while (*(++str) != '"')
+// 	{
+// 		i++;
+// 	}
+// 	tmp->arg =
+// 	return (str)
+// }
+
+char	*othersymbolas(t_list *tmp, char *str)
+{
+	if (ft_strncmp(str, "-n", 2) == 0)
+	{
+		tmp->opt = ft_substr(str, 0, 2);
+		return (str + 2);
+	}
+	// if (*str == '"')
+	// {
+	// 	str = extractargs(tmp, str, '"');
+
+	// }
+	return(str);
+}
+
+int		our_syms(char c)
+{
+	if (c == '\'' || c == '\\' || c == '"')
+		return (1);
+	else
+		return (0);
+}
+
+char	*comandas(char *str, t_pt *p)
+{
+	int	push;
+
+	push = 0;
+	if (our_syms(*str))
+	{
+		push++;
+	}
+	if (ft_isalnum(*str))
+	{
+		printf("%s\n", p->storage);
+		p->storage = ft_joinsym(p->storage, *str);
+		push++;
+	}
+	return (str + push);
+}
+void	sortout(t_list *tmp, t_pt *p)
+{
+	char	*str;
+
+	str = (char *)tmp->content;
+	while (*str != '\0')
+	{
+		str = comandas(str, p);
+		// if (ft_isalnum(*str))
+		// 	str = wcomanda(tmp, str);
+
+		// if (*str == ' ')
+		// 	str++;
+
+		// if (our_syms(*str))
+		// 	str = othersymbolas(tmp, str);
+	}
+	printf("%s\n", p->storage);
+}
+
+void	goparty(t_list **head, t_pt *p)
+{
+	t_list *tmp;
+
+	tmp = *head;
+	while (tmp)
+	{
+		sortout(tmp, p);
+		tmp = tmp->next;
+	}
+}
 
 
 void	go_ahead(t_pt *p, t_list **head)
@@ -265,94 +398,18 @@ void	go_ahead(t_pt *p, t_list **head)
 	p->copy = p->fmt;
 }
 
-char	*alnum_check(t_list *tmp, char *str)
+void	do_same(t_pt *p, t_list **head)
 {
-	if (ft_strncmp(str, "echo ", 5) == 0)
-	{
-		tmp->cmd = ft_substr(str, 0, 4);
-		return (str + 4);
-	}
-	// if (ft_strncmp(str, "exit ", 5) == 0)
-	// {
-	// 	return(1);
-	// }
-	// if (ft_strncmp(str, "cd ", 3) == 0)
-	// {
 
-	// }
-	// if (ft_strncmp(str, "env ", 4) == 0)
-	// {
+	char *newstr;
 
-	// }
-	// if (ft_strncmp(str, "pwd ", 4) == 0)
+	newstr = ft_substr(p->copy, 0, p->cut);
+	ft_lstadd_back(head, ft_lstnew_pipe(newstr));
 
-	// if (ft_strncmp(str, "export ", 7) == 0)
-
-	// if (ft_strncmp(str, "unset ", 6) == 0)
-
-	return (str);
-}
-
-char	*othersymbolas(t_list *tmp, char *str)
-{
-	if (ft_strncmp(str, "-n", 2) == 0)
-	{
-
-		tmp->opt = ft_substr(str, 0, 2);
-		return (str + 2);
-	}
-	// if (*str == '"')
-	// {
-	// 	int i;
-	// 	char *sub;
-
-	// 	sub = str + 1;
-	// 	i = 0;
-	// 	while (*(++str) != '"')
-	// 	{
-	// 		i++;
-	// 	}
-	// 	tmp->arg
-	// }
-	return(str);
-}
-
-int		our_syms(char c)
-{
-	if (c == '\'' || c == '-' || c == '"' || c == '$')
-		return (1);
-	else
-		return (0);
-}
-void	sortout(t_list *tmp)
-{
-	int		i;
-	char	*str;
-
-	str = (char *)tmp->content;
-	while (*str != '\0')
-	{
-		if (ft_isalnum(*str))
-		{
-			str = alnum_check(tmp, str);
-		}
-		if (*str == ' ')
-			str++;
-		if (our_syms(*str))
-			str = othersymbolas(tmp, str);
-	}
-}
-
-void	goparty(t_list **head)
-{
-	t_list *tmp;
-
-	tmp = *head;
-	while (tmp)
-	{
-		sortout(tmp);
-		tmp = tmp->next;
-	}
+	p->cut = 0;
+	if (*p->fmt != '\0')
+		p->fmt += 1;
+	p->copy = p->fmt;
 }
 
 void	step_by_step(t_pt *p, t_list **head)
@@ -377,22 +434,8 @@ void	step_by_step(t_pt *p, t_list **head)
 				tmp = ft_lstlast(*head);
 				tmp->flag = 2;
 		}
-		goparty(head);
+		goparty(head, p);
 	}
-}
-
-void	do_same(t_pt *p, t_list **head)
-{
-
-	char *newstr;
-
-	newstr = ft_substr(p->copy, 0, p->cut);
-	ft_lstadd_back(head, ft_lstnew_pipe(newstr));
-
-	p->cut = 0;
-	if (*p->fmt != '\0')
-		p->fmt += 1;
-	p->copy = p->fmt;
 }
 
 int		processing(char *line)
@@ -414,13 +457,13 @@ int		processing(char *line)
 		else
 			step_by_step(p, &head);
 	}
-	tmp = head;
-	while (tmp)
-	{
-		printf("%s\n", tmp->cmd);
-		printf("%s\n", tmp->opt);
-		tmp = tmp->next;
-	}
+	// tmp = head;
+	// while (tmp)
+	// {
+	// 	printf("%s\n", tmp->cmd);
+	// 	printf("%s\n", tmp->opt);
+	// 	tmp = tmp->next;
+	// }
 	ft_lstclear(&head,free);
 	free(p);
 	return (0);
