@@ -6,7 +6,7 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/03 16:38:23 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/10 19:45:17 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/11 19:25:03 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,10 +47,7 @@ char	*ft_joinsym(char *str, char c)
 	size_t	len;
 	char	*newstr;
 	if (str != 0)
-	{
 		len = ft_strlen(str);
-		// printf("|%zu|\n", len);
-	}
 	else
 		len = 0;
 	newstr = (char *)ft_calloc(sizeof(char), len + 2);
@@ -62,10 +59,12 @@ char	*ft_joinsym(char *str, char c)
 			newstr[i] = str[i];
 			i++;
 		}
-		printf("%zu\n", i);
 		newstr[i] = c;
 	}
 	else
 		newstr[i] = c;
 	return (newstr);
 }
+// "e"'c'\ho \-"n"
+// gcc minishell.c libft.a -g -fsanitize=address
+echo "hello \" world"
