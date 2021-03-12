@@ -6,7 +6,7 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/24 15:15:48 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/11 19:31:29 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/12 18:43:55 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -228,30 +228,100 @@ int		analysis(char *line)
 	return (0);
 }
 
-int		our_syms(char c)
+
+
+char	*ecr(char *str, t_list *tmp)
 {
-	if (c == '\'' || c == '\\' || c == '"')
-		return (1);
-	else
-		return (0);
+	char *sub;
+	char *del;
+	char *one;
+
+	sub = ft_substr(str, 1, 1);
+	del = sub;
+	one = tmp->cmd;
+	tmp->cmd = ft_joinsym(tmp->cmd, *sub);
+	free(one);
+	free(sub);
+	return (str + 2);
 }
 
-char	*comandas( char *str, t_list *tmp)
+char	*ecrq(char *str, t_list *tmp)
 {
-	int		push;
-	char	*del;
+	char *sub;
+	char *del;
+	char *one;
 
-	push = 0;
-	if (our_syms(*str))
-		push++;
-	if (*str != ' ' && push == 0)
+	if (*(str + 1) == '\\')
+		sub = ft_substr(str, 0, 1);
+	else
+		sub = ft_substr(str, 0, 2);
+	del = sub;
+	one = tmp->cmd;
+	tmp->cmd = ft_strjoin(tmp->cmd, sub);
+	free(one);
+	free(sub);
+	return (str + 2);
+}
+
+char	*quno(char *str, t_list *tmp, t_pt *p)
+{
+	char *del;
+	while (*str != '"')
 	{
+		if (*str == '\\')
+			str = ecrq(str, tmp);
+		if (*str == '"')
+			break ;
 		del = tmp->cmd;
 		tmp->cmd = ft_joinsym(tmp->cmd, *str);
 		free(del);
-		push++;
+		str++;
 	}
-	return (str + push);
+	return (++str);
+}
+
+char	*qdeux(char *str, t_list *tmp, t_pt *p)
+{
+	char *del;
+	while (*str != '\'')
+	{
+		if (*str == '\\')
+			str = ecr(str, tmp);
+		if (*str == '\'')
+			break ;
+		del = tmp->cmd;
+		tmp->cmd = ft_joinsym(tmp->cmd, *str);
+		free(del);
+		str++;
+	}
+	return (++str);
+}
+
+char	*comandas( char *str, t_list *tmp, t_pt *p)
+{
+
+	char	*del;
+	if (*str == '"')
+	{
+		// str = quno(++str, tmp, p);
+		return (quno(++str, tmp, p));
+	}
+
+	if (*str == '\'')
+	{
+		str = qdeux(++str, tmp, p);
+		return (str);
+	}
+	if (*str == '\\')
+	{
+		str = ecr(str, tmp);
+		return (str);
+	}
+	del = tmp->cmd;
+	tmp->cmd = ft_joinsym(tmp->cmd, *str);
+	free(del);
+	str++;
+	return (str);
 }
 
 char	*argumentas(char *str, t_list *tmp, t_pt *p)
@@ -262,7 +332,7 @@ char	*argumentas(char *str, t_list *tmp, t_pt *p)
 	int i;
 
 	i = 0;
-	printf("%s\n", str);
+
 	if (*str == '"')
 	{
 		str++;
@@ -291,25 +361,24 @@ char	*argumentas(char *str, t_list *tmp, t_pt *p)
 	return (str);
 }
 
+
 void	sortout(t_list *tmp, t_pt *p)
 {
 	char	*str;
-	int i = 0;
 	str = (char *)tmp->content;
 	while (*str != '\0')
 	{
 		if (p->cmd == 0)
-			str = comandas(str, tmp);
+			str = comandas(str, tmp, p);
 		if (*str == ' ')
 		{
 			str++;
-			p->cmd = 1;
+		 	p->cmd = 1;
 		}
 		if (p->cmd == 1)
 			str = argumentas(str, tmp, p);
-		i++;
 	}
-	printf("|%s|\n", p->safe);
+	printf("|%s|\n", tmp->cmd);
 
 }
 
@@ -369,13 +438,13 @@ void	skipper(t_pt *p)
 	p->cut += 1;
 	while (*p->fmt != c)
 	{
+		p->fmt += 1;
+		p->cut += 1;
 		if (*p->fmt == '\\')
 		{
 			p->fmt += 2;
 			p->cut += 2;
 		}
-		p->fmt += 1;
-		p->cut += 1;
 	}
 }
 
@@ -437,12 +506,12 @@ int		processing(char *line)
 		else
 			step_by_step(p, &head);
 	}
-	tmp = head;
-	while (tmp)
-	{
-		printf("%s\n", tmp->cmd);
-		tmp = tmp->next;
-	}
+	// tmp = head;
+	// while (tmp)
+	// {
+	// 	printf("%s\n", tmp->cmd);
+	// 	tmp = tmp->next;
+	// }
 	ft_lstclear(&head,free);
 	free(p->safe);
 	free(p);
