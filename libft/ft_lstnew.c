@@ -6,7 +6,7 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/06 20:59:19 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/10 13:14:48 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/13 16:52:02 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,8 @@ t_list	*ft_lstnew(void *content)
 	if (!(new = (t_list*)malloc(sizeof(*new))))
 		return (NULL);
 	new->flag = 0;
-	new->opt = 0;
 	new->cmd = 0;
-	new->non = 0;
+	new->arg = 0;
 	new->content = content;
 	new->next = NULL;
 	return (new);
@@ -35,7 +34,7 @@ t_list	*ft_lstnew_pipe(void *content)
 		return (NULL);
 	new->content = content;
 	new->flag = 1;
-	new->opt = 0;
+	new->arg = 0;
 	new->cmd = 0;
 	new->next = NULL;
 	return (new);

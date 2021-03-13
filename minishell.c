@@ -6,7 +6,7 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/24 15:15:48 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/12 18:43:55 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/13 17:58:17 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -299,24 +299,13 @@ char	*qdeux(char *str, t_list *tmp, t_pt *p)
 
 char	*comandas( char *str, t_list *tmp, t_pt *p)
 {
-
 	char	*del;
 	if (*str == '"')
-	{
-		// str = quno(++str, tmp, p);
 		return (quno(++str, tmp, p));
-	}
-
 	if (*str == '\'')
-	{
-		str = qdeux(++str, tmp, p);
-		return (str);
-	}
+		return (qdeux(++str, tmp, p));
 	if (*str == '\\')
-	{
-		str = ecr(str, tmp);
-		return (str);
-	}
+		return (ecr(str, tmp));
 	del = tmp->cmd;
 	tmp->cmd = ft_joinsym(tmp->cmd, *str);
 	free(del);
@@ -324,40 +313,98 @@ char	*comandas( char *str, t_list *tmp, t_pt *p)
 	return (str);
 }
 
+char	*ecrarg(char *str, t_list *tmp, t_pt *p)
+{
+	char *sub;
+	char *del;
+	char *one;
+
+	sub = ft_substr(str, 1, 1);
+	del = sub;
+	one = p->safe;
+	p->safe = ft_joinsym(p->safe, *sub);
+	free(one);
+	free(sub);
+	return (str + 2);
+}
+
+char	*ecrqarg(char *str, t_list *tmp, t_pt *p)
+{
+	char *sub;
+	char *del;
+	char *one;
+
+	if (*(str + 1) == '\\')
+		sub = ft_substr(str, 0, 1);
+	else
+		sub = ft_substr(str, 0, 2);
+	del = sub;
+	one = p->safe;
+	p->safe = ft_strjoin(p->safe, sub);
+	free(one);
+	free(sub);
+	return (str + 2);
+}
+
+
+
+char	*qdeuxarg(char *str, t_list *tmp, t_pt *p)
+{
+	char *del;
+	while (*str != '\'')
+	{
+		if (*str == '\\')
+			str = ecr(str, tmp);
+		if (*str == '\'')
+			break ;
+		del = p->safe;
+		p->safe = ft_joinsym(p->safe, *str);
+		free(del);
+		str++;
+	}
+	return (++str);
+}
+
+char	*qarg(char *str, t_list *tmp, t_pt *p)
+{
+	char *del;
+	while (*str != '"')
+	{
+		if (*str == '\\')
+			str = ecrqarg(str, tmp, p);
+		if (*str == '"')
+			break ;
+		del = p->safe;
+		p->safe = ft_joinsym(p->safe, *str);
+		free(del);
+		str++;
+	}
+	return (++str);
+}
+
 char	*argumentas(char *str, t_list *tmp, t_pt *p)
 {
 	char	*del;
-	char	*sub;
-	char	*one;
-	int i;
-
-	i = 0;
-
+	// printf("%s\n", str);
 	if (*str == '"')
+		return (qarg(++str, tmp, p));
+	if (*str == '\'')
+		return (qdeuxarg(++str, tmp, p));
+	if (*str == '\\')
+		return (ecrarg(str, tmp, p));
+	del = p->safe;
+	p->safe = ft_joinsym(p->safe, *str);
+
+	free(del);
+	str++;
+	if (*str == ' ' || *str == '\0')
 	{
-		str++;
-		while(*str != '"')
-		{
-			if (*str == '\\')
-			{
-
-				sub = ft_substr(str, 1, 1);
-				del = sub;
-				one = p->safe;
-				p->safe = ft_strjoin(p->safe, sub);
-				free (one);
-				free(sub);
-
-				str += 2;
-			}
-			del = p->safe;
-			p->safe = ft_joinsym(p->safe, *str);
-			free(del);
-			str++;
-		}
+		// printf("%s\n", p->safe);
+		tmp->arg = newarr(tmp->arg, p->safe);
+		free(p->safe);
+		p->safe = NULL;
 		str++;
 	}
-
 	return (str);
 }
 
@@ -378,7 +425,14 @@ void	sortout(t_list *tmp, t_pt *p)
 		if (p->cmd == 1)
 			str = argumentas(str, tmp, p);
 	}
-	printf("|%s|\n", tmp->cmd);
+	p->cmd = 0;
+	// printf("|%s|\n", tmp->cmd);
+	// int i = -1;
+	// while (tmp->arg[++i])
+	// {
+	// 	printf("%d\n", i);
+	// 	printf("%s\n", tmp->arg[i]);
+	// }
 
 }
 
@@ -412,6 +466,7 @@ void	go_ahead(t_pt *p, t_list **head)
 	if (*p->fmt != '\0')
 		p->fmt += 1;
 	p->copy = p->fmt;
+	goparty(head, p);
 }
 
 void	do_same(t_pt *p, t_list **head)
@@ -506,14 +561,22 @@ int		processing(char *line)
 		else
 			step_by_step(p, &head);
 	}
-	// tmp = head;
-	// while (tmp)
-	// {
-	// 	printf("%s\n", tmp->cmd);
-	// 	tmp = tmp->next;
-	// }
+	tmp = head;
+	int i;
+	int j;
+	while (tmp)
+	{
+		printf("ЛИСТ НОМЕР %d:COMMAND %s\n",i, tmp->cmd);
+		j = 0;
+		while (j < size_arr(tmp->arg))
+		{
+			printf("АРГУМЕНТЫ %d, %s\n", i, tmp->arg[j]);
+			j++;
+		}
+		tmp = tmp->next;
+		i++;
+	}
 	ft_lstclear(&head,free);
-	free(p->safe);
 	free(p);
 	return (0);
 }

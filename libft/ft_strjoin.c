@@ -6,7 +6,7 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/03 16:38:23 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/11 19:25:03 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/13 16:29:22 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,4 +67,4 @@ char	*ft_joinsym(char *str, char c)
 }
 // "e"'c'\ho \-"n"
 // gcc minishell.c libft.a -g -fsanitize=address
-echo "hello \" world"
+// echo "hello \" world"
