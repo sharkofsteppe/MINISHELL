@@ -6,7 +6,7 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/24 15:15:48 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/13 17:58:17 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/15 19:48:35 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,10 @@ t_pt	*init_ptr(void)
 	ptr->cut = 0;
 	ptr->cmd = 0;
 	ptr->opt = 0;
-	ptr->q = 0;
+	ptr->q = 2;
 	ptr->safe = 0;
 	return (ptr);
 }
-
-
 
 void	squots(char **fmt, char c, int *flag)
 {
@@ -217,14 +215,6 @@ int		analysis(char *line)
 		return (1);
 	if (rdractedeux(fmt))
 		return (1);
-	// checkcolons(fmt);
-	// checkpipe(fmt);
-	// tmp = *head;
-	// while (tmp)
-	// {
-	// 	printf("%s\n", tmp->content);
-	// 	tmp = tmp->next;
-	// }
 	return (0);
 }
 
@@ -306,6 +296,8 @@ char	*comandas( char *str, t_list *tmp, t_pt *p)
 		return (qdeux(++str, tmp, p));
 	if (*str == '\\')
 		return (ecr(str, tmp));
+	if (*str == ' ')
+		p->cmd = 1;
 	del = tmp->cmd;
 	tmp->cmd = ft_joinsym(tmp->cmd, *str);
 	free(del);
@@ -385,7 +377,6 @@ char	*qarg(char *str, t_list *tmp, t_pt *p)
 char	*argumentas(char *str, t_list *tmp, t_pt *p)
 {
 	char	*del;
-	// printf("%s\n", str);
 	if (*str == '"')
 		return (qarg(++str, tmp, p));
 	if (*str == '\'')
@@ -394,20 +385,54 @@ char	*argumentas(char *str, t_list *tmp, t_pt *p)
 		return (ecrarg(str, tmp, p));
 	del = p->safe;
 	p->safe = ft_joinsym(p->safe, *str);
-
 	free(del);
 	str++;
 	if (*str == ' ' || *str == '\0')
 	{
-		// printf("%s\n", p->safe);
 		tmp->arg = newarr(tmp->arg, p->safe);
 		free(p->safe);
 		p->safe = NULL;
-		str++;
 	}
 	return (str);
 }
 
+char	*argument_rdr(char *str, t_list *tmp, t_pt *p)
+{
+	char	*del;
+	if (*str == '"')
+		return (qarg(++str, tmp, p));
+	if (*str == '\'')
+		return (qdeuxarg(++str, tmp, p));
+	if (*str == '\\')
+		return (ecrarg(str, tmp, p));
+	del = p->safe;
+	p->safe = ft_joinsym(p->safe, *str);
+	free(del);
+	if (*str != ' ')
+		str++;
+	if ((*str != '>' && p->q == 0) || *str == '\0' || *str == ' ')
+	{
+		tmp->arg = newarr(tmp->arg, p->safe);
+		free(p->safe);
+		p->safe = NULL;
+		p->q += 1;
+	}
+	return (str);
+}
+
+char	*rdrdisperse(char *str, t_list *tmp, t_pt *p)
+{
+	while (*str != '\0')
+	{
+		str = argument_rdr(str, tmp, p);
+		if (p->q == 2)
+		{
+			str++;
+			break;
+		}
+	}
+	return (str);
+}
 
 void	sortout(t_list *tmp, t_pt *p)
 {
@@ -415,14 +440,20 @@ void	sortout(t_list *tmp, t_pt *p)
 	str = (char *)tmp->content;
 	while (*str != '\0')
 	{
-		if (p->cmd == 0)
-			str = comandas(str, tmp, p);
-		if (*str == ' ')
+		if (*str == '>' || *str == '<')
 		{
-			str++;
-		 	p->cmd = 1;
+			p->q = 0;
+			str = rdrdisperse(str, tmp, p);
 		}
-		if (p->cmd == 1)
+
+		if (p->cmd == 0 && p->q == 2)
+		{
+			printf("HELLO\n");
+			str = comandas(str, tmp, p);
+		}
+		if (p->cmd == 1 && *str == ' ')
+			str++;
+		if (p->cmd == 1 && *str != ' ' && *str != '>')
 			str = argumentas(str, tmp, p);
 	}
 	p->cmd = 0;
@@ -435,6 +466,7 @@ void	sortout(t_list *tmp, t_pt *p)
 	// }
 
 }
+
 
 void	goparty(t_list **head, t_pt *p)
 {
@@ -570,7 +602,7 @@ int		processing(char *line)
 		j = 0;
 		while (j < size_arr(tmp->arg))
 		{
-			printf("АРГУМЕНТЫ %d, %s\n", i, tmp->arg[j]);
+			printf("АРГУМЕНТЫ ЛИСТА %d, %s\n", i, tmp->arg[j]);
 			j++;
 		}
 		tmp = tmp->next;

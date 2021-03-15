@@ -6,7 +6,7 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 14:33:16 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/13 18:04:28 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/15 19:49:40 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,6 @@ typedef struct		s_list
 	struct s_list	*next;
 	char			*cmd;
 	char			**arg;
-	char			*into;
-	char			*from;
 	int				flag;
 }					t_list;
 
@@ -50,6 +48,7 @@ typedef struct		s_pt
 	int		cmd;
 	int		opt;
 	char	*safe;
+	char	*rdr;
 	int		q;
 }					t_pt;
 
@@ -130,5 +129,6 @@ t_list				*ft_lstnew_pipe(void *content);
 char				*ft_joinsym(char *str, char c);
 char				**str_to_array(char **array, char *str);
 char				**newarr(char **arr, char *str);
+void				ft_swap(char *a, char *b);
 
 #endif
