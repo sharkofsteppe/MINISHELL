@@ -6,38 +6,36 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/03 16:38:23 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/13 16:29:22 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/16 18:55:51 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
+
+
 char	*ft_strjoin(char const *str1, char const *str2)
 {
 	size_t	i;
 	size_t	j;
+	size_t	len1;
+	size_t	len2;
 	char	*newstring;
 
-	i = 0;
-	j = 0;
-	if (!(str1) || !(str2))
-		return (NULL);
-	newstring = (char*)malloc(sizeof(newstring) *
-	(ft_strlen(str1) + ft_strlen(str2) + 1));
-	if (!(newstring))
-		return (NULL);
-	while (i < ft_strlen(str1) + ft_strlen(str2) + 1)
+	if (str1 == NULL)
+		return (ft_strdup(str2));
+	len1 = ft_strlen(str1);
+	len2 = ft_strlen(str2);
+	newstring = (char*)ft_calloc(sizeof(char), len1 + len2  + 1);
+	i = -1;
+	while (++i < len1)
+		newstring[i] = str1[i];
+	j = -1;
+	while (++j < len2)
 	{
-		if (i < ft_strlen(str1))
-			newstring[i] = str1[i];
-		if (i >= ft_strlen(str1))
-		{
-			newstring[i] = str2[j];
-			j++;
-		}
+		newstring[i] = str2[j];
 		i++;
-	}
-	newstring[i] = '\0';
+ 	}
 	return (newstring);
 }
 

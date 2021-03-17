@@ -6,7 +6,7 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 14:33:16 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/15 19:49:40 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/17 15:37:59 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ typedef struct		s_list
 	struct s_list	*next;
 	char			*cmd;
 	char			**arg;
+	char			**rdr;
 	int				flag;
 }					t_list;
 
@@ -46,9 +47,7 @@ typedef struct		s_pt
 	char	*fmt;
 	int		cut;
 	int		cmd;
-	int		opt;
 	char	*safe;
-	char	*rdr;
 	int		q;
 }					t_pt;
 
@@ -132,3 +131,8 @@ char				**newarr(char **arr, char *str);
 void				ft_swap(char *a, char *b);
 
 #endif
+
+
+// echo echo"'$PWD'"
+// '\f'
+// '\''
