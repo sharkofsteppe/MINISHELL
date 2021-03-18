@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/24 15:15:48 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/18 14:56:28 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/18 18:34:18 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ t_pt	*init_ptr(void)
 	ptr->cmd = 0;
 	ptr->q = 2;
 	ptr->safe = 0;
+	ptr->dlr = 0;
 	return (ptr);
 }
 
@@ -271,6 +272,42 @@ char	*ecrq(char *str, t_list *tmp)
 	return (str + 2);
 }
 
+int		dol_sym(char c)
+{
+	if (c == '\\' || c == '\'' || c == '"' || c == '\0' || c == ' ')
+		return (0);
+	return (1);
+}
+
+char	*dollar(char *str, t_list *tmp, t_pt *p, t_shell *shell)
+{
+	char	*del;
+	char	*dlr;
+
+	while (dol_sym(*str))
+	{
+		del = p->dlr;
+		p->dlr = ft_joinsym(p->dlr, *str);
+		free(del);
+		if (ft_isdigit(*str))
+		{
+			str++;
+			break;
+		}
+		str++;
+	}
+	del = tmp->cmd;
+	dlr = get_env(p->dlr, shell);
+	if (dlr != NULL)
+	{
+		tmp->cmd = ft_strjoin(tmp->cmd, dlr);
+		free(del);
+	}
+	free(p->dlr);
+	p->dlr = 0;
+	return (str);
+}
+
 char	*qun(char *str, t_list *tmp, t_pt *p)
 {
 	char *del;
@@ -278,8 +315,11 @@ char	*qun(char *str, t_list *tmp, t_pt *p)
 	{
 		if (*str == '\\')
 			str = ecrq(str, tmp);
+		if (*str == '$')
+			
 		if (*str == '"')
 			break ;
+		// if ()
 		if (*str != '\\')
 		{
 			del = tmp->cmd;
@@ -306,15 +346,20 @@ char	*qdeux(char *str, t_list *tmp, t_pt *p)
 	return (++str);
 }
 
-char	*comandas( char *str, t_list *tmp, t_pt *p)
+
+
+char	*comandas( char *str, t_list *tmp, t_pt *p, t_shell *shell)
 {
 	char	*del;
+
 	if (*str == '"')
 		return (qun(++str, tmp, p));
 	if (*str == '\'')
 		return (qdeux(++str, tmp, p));
 	if (*str == '\\')
 		return (ecr(str, tmp));
+	if (*str == '$')
+		return (dollar(++str, tmp, p, shell));
 	del = tmp->cmd;
 	tmp->cmd = ft_joinsym(tmp->cmd, *str);
 	free(del);
@@ -587,7 +632,7 @@ void	sortout(t_list *tmp, t_pt *p, t_shell *shell)
 		}
 		if (p->cmd == 0 && p->q == 2 && *str != ' ')
 		{
-			str = comandas(str, tmp, p);
+			str = comandas(str, tmp, p, shell);
 		}
 		if (*str == ' ')
 		{
@@ -621,7 +666,6 @@ void	goparty(t_list **head, t_pt *p, t_shell *shell)
 	tmp = *head;
 	int i;
 	int j;
-	printf("%s\n", get_env("PATH", shell));
 	while (tmp)
 	{
 		printf("ЛИСТ НОМЕР %d:COMMAND |%s|\n",i, tmp->cmd);

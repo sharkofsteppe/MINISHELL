@@ -6,7 +6,7 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 14:33:16 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/17 15:37:59 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/18 15:55:16 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ typedef struct		s_pt
 	int		cut;
 	int		cmd;
 	char	*safe;
+	char	*dlr;
 	int		q;
 }					t_pt;
 
