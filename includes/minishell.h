@@ -6,54 +6,101 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/24 17:57:50 by ezachari          #+#    #+#             */
-/*   Updated: 2021/02/24 19:42:02 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/18 14:41:44 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
-# include "libft.h"
-# include <errno.h>
 # include <stdlib.h>
 # include <unistd.h>
+# include <errno.h>
+# include <string.h>
 # include <fcntl.h>
-# include <stdio.h>
-# define RED     "\x1b[31m"
-# define GREEN   "\x1b[32m"
-# define YELLOW  "\x1b[33m"
-# define BLUE    "\x1b[34m"
-# define MAGENTA "\x1b[35m"
-# define CYAN    "\x1b[36m"
-# define RESET   "\x1b[0m"
+# include <sys/types.h>
+# include <dirent.h>
+# define RED "\x1b[31m"
+# define GRE "\x1b[32m"
+# define YEL "\x1b[33m"
+# define BLU "\x1b[34m"
+# define MAG "\x1b[35m"
+# define CYA "\x1b[36m"
+# define RES "\x1b[0m"
+# define MTRUE 1
+# define MFALSE 0
+# define MNONE -1
 
-typedef struct  s_all
+int				g_status;
+
+typedef struct	s_envp
 {
-    char    **cmd;
-    char    **env;
-    char    *home;
-}               t_all;
+	char			*name;
+	char			*content;
+	struct s_envp	*next;
+}				t_envp;
 
-/*
-** UTILS    ==========================================
-** comment: сюда записываем функции которые будут полезны и при парсинге и при экзекуте
-*/
-int             free_split(char **split);
-int             print_promt(t_all *all);
-char            *get_env(char *str, char **env);
-int             set_env(char *src, char *dist, char **env);
-/*
-** EXEC     ==========================================
-** comment: сюда записываем функции связанные с экзекутом
-*/
-int             exec_cmd(t_all *all);
-int             exec_exit(t_all *all);
-int             exec_cd(t_all *all);
-int             exec_env(t_all *all);
-int             exec_echo(t_all *all);
-int             exec_setenv(t_all *all);
-int             exec_unsetenv(t_all *all);
-/*
-** PARSER   ==========================================
-** comment: сюда записываем функции связанные с парсингом
-*/
+typedef struct	s_cmd
+{
+	char	*name;
+	char	**argv;
+	int		argc;
+	int		piped;
+	int		redirected;
+}				t_cmd;
+
+typedef struct	s_shell
+{
+	char	**envp;
+	t_envp	*env;
+	char	**e_envp;
+	char	**argv;
+	t_cmd	**cmd;
+}				t_shell;
+
+typedef struct	s_bin
+{
+	char			*path;
+	DIR				*dir;
+	char			*newpath;
+	char			**search;
+	struct dirent	*info;
+	char			*res;
+}				t_bin;
+
+typedef struct	s_sort
+{
+	char	*name;
+	char	*tmpname;
+	char	*content;
+	char	*tmpcontent;
+}				t_sort;
+
+char			**list_to_mass(t_envp **head);
+int				get_argv_size(char **argv);
+int				builtin_exit(t_shell *shell, int flag);
+char			**copy_env(char **envp);
+void			init_envp(char **envp, t_envp **head);
+void			envp_add_back(t_envp **envp, t_envp *new);
+t_envp			*new_elem(char *name, char *content);
+char			*wombo_combo(char *str1, char *str2, char *str3);
+char			*get_env(char *name, t_shell *shell);
+void			free_split(char **split);
+void			print_promt(void);
+void			print_error(char *error, char *ext, char *cmd, int flag);
+int				run_cmd(char **cmd, char **argv, t_shell *shell);
+int				set_env(char *name, char *new, t_shell *shell);
+void			handle_isignal(int sig);
+void			handle_qsignal(int sig);
+void			handle_exvsig(int sig);
+int				builtin_cd(char **argv, int size, t_shell *shell);
+int				builtin_pwd(void);
+int				builtin_env(t_shell *shell);
+int				builtin_export(char **argv, t_shell *shell);
+int				builtin_unset(char **argv, t_shell *shell);
+int				builtin_echo(char **argv, int size, t_shell *shell);
+int				check_env(char *name, t_shell *shell);
+void			sort_envp(t_envp **envp);
+int				envpsize_2(t_envp *envp);
+void			envp_clear(t_envp **env, void (*del)(void*));
+int				set_status(int err);
 #endif

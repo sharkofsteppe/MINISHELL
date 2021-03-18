@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/24 15:15:48 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/18 13:53:44 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/18 14:56:28 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft/libft.h"
+#include "includes/minishell.h"
 
 t_pt	*init_ptr(void)
 {
@@ -571,7 +572,7 @@ char	*rdrdisperse(char *str, t_list *tmp, t_pt *p)
 }
 
 
-void	sortout(t_list *tmp, t_pt *p)
+void	sortout(t_list *tmp, t_pt *p, t_shell *shell)
 {
 
 	char	*str;
@@ -607,19 +608,20 @@ void	sortout(t_list *tmp, t_pt *p)
 }
 
 
-void	goparty(t_list **head, t_pt *p)
+void	goparty(t_list **head, t_pt *p, t_shell *shell)
 {
 	t_list *tmp;
 
 	tmp = *head;
 	while (tmp)
 	{
-		sortout(tmp, p);
+		sortout(tmp, p, shell);
 		tmp = tmp->next;
 	}
 	tmp = *head;
 	int i;
 	int j;
+	printf("%s\n", get_env("PATH", shell));
 	while (tmp)
 	{
 		printf("ЛИСТ НОМЕР %d:COMMAND |%s|\n",i, tmp->cmd);
@@ -644,7 +646,7 @@ void	goparty(t_list **head, t_pt *p)
 }
 
 
-void	go_ahead(t_pt *p, t_list **head)
+void	go_ahead(t_pt *p, t_list **head, t_shell *shell)
 {
 	char	*newstr;
 	t_list	*tmp;
@@ -661,7 +663,7 @@ void	go_ahead(t_pt *p, t_list **head)
 	if (*p->fmt != '\0')
 		p->fmt += 1;
 	p->copy = p->fmt;
-	goparty(head, p);
+	goparty(head, p, shell);
 }
 
 void	do_same(t_pt *p, t_list **head)
@@ -740,7 +742,7 @@ void	every_move(t_pt *p)
 		pusher(1, p);
 }
 
-void	step_by_step(t_pt *p, t_list **head)
+void	step_by_step(t_pt *p, t_list **head, t_shell *shell)
 {
 	char *newstr;
 	t_list *tmp;
@@ -757,11 +759,11 @@ void	step_by_step(t_pt *p, t_list **head)
 				tmp = ft_lstlast(*head);
 				tmp->flag = 2;
 		}
-		goparty(head, p);
+		goparty(head, p, shell);
 	}
 }
 
-int		processing(char *line)
+int		processing(char *line, t_shell *shell)
 {
 	t_pt	*p;
 	t_list	*head;
@@ -774,11 +776,11 @@ int		processing(char *line)
 	while (*p->fmt != '\0')
 	{
 		if (*p->fmt == ';')
-			go_ahead(p, &head);
+			go_ahead(p, &head, shell);
 		if (*p->fmt == '|')
 			do_same(p, &head);
 		else
-			step_by_step(p, &head);
+			step_by_step(p, &head, shell);
 	}
 	// tmp = head;
 	// int i;
@@ -805,16 +807,18 @@ int		main(int argc, char **argv, char **env)
 	char	*line;
 	int		loop;
 	int		read;
+	t_shell	shell;
 
 	(void)argc;
 	(void)argv;
-	(void)env;
 	loop = 1;
+	shell.env = NULL;
+	init_envp(env, &shell.env);
 	while (loop == 1)
 	{
 		read = get_next_line(0, &line);
 		if (analysis(line) == 0)
-			processing(line);
+			processing(line, &shell);
 		else
 			printf("SOMETHING WENT WRONG\n");
 		free(line);
