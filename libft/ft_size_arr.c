@@ -6,7 +6,7 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/15 10:13:33 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/19 19:01:19 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/20 13:46:09 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,14 @@
 
 int		size_arr(char **str)
 {
+	int i;
+
+	i = 0;
 	if (str == NULL)
 		return (0);
-	return (sizeof(str) / sizeof(char *));
+	while (str[i])
+		i++;
+	return (i);
 }
 
 char	**newarr(char **arr, char *str)
@@ -45,27 +50,4 @@ char	**newarr(char **arr, char *str)
 	return (newarr);
 }
 
-char	**nullarr(char **arr, char *str)
-{
-	char	**newarr;
-	int		len;
-	int		i;
 
-	if (arr == NULL)
-		len = 0;
-	else
-		len = size_arr(arr);
-	if (!(newarr = (char **)ft_calloc(sizeof(char *), (len + 2))))
-		return (NULL);
-	i = 0;
-	while (i < len)
-	{
-		newarr[i] = ft_strdup(arr[i]);
-		i++;
-	}
-	newarr[i] = str;
-	newarr[i + 1] = NULL;
-	if (arr != NULL)
-		ft_memory_free(arr, size_arr(arr));
-	return (newarr);
-}

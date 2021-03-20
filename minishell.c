@@ -6,7 +6,7 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/24 15:15:48 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/19 19:19:03 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/20 14:55:01 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -356,7 +356,7 @@ char	*comandas( char *str, t_list *tmp, t_pt *p, t_shell *shell)
 		return (qdeux(++str, tmp, p));
 	if (*str == '\\')
 		return (ecr(str, tmp));
-	if (*str == '$')
+	if (*str == '$' && *(str + 1) != '\\')
 		return (dollar(++str, tmp, p, shell));
 	del = tmp->cmd;
 	tmp->cmd = ft_joinsym(tmp->cmd, *str);
@@ -560,7 +560,15 @@ char	*ecrqrdr(char *str, t_list *tmp, t_pt *p)
 
 char	*om_handle(char *str, t_list *tmp, t_pt *p)
 {
-	if
+
+	if (*str == '\\' && *(str + 1) == '\0')
+	{
+		tmp->rdr = newarr(tmp->rdr, "ambiguous redirect");
+		p->q += 1;
+		return (str++);
+	}
+	// if (*str == '')
+	return (++str);
 }
 
 char	*dollarrdr(char *str, t_list *tmp, t_pt *p, t_shell *shell)
@@ -568,8 +576,9 @@ char	*dollarrdr(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 	char	*del;
 	char	*dlr;
 
-	if (ft_isdigit(*str) || *str == '\\')
-		return (om_handle(str, tmp, p));
+	if (ft_isdigit(*str))
+		str = om_handle(str, tmp, p);
+	printf("|%s |!!\n", str);
 	while (dol_sym(*str))
 	{
 		del = p->dlr;
@@ -687,6 +696,8 @@ char	*rdrdisperse(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 		if (p->q == 2)
 			break;
 	}
+	printf("|%d|\n", p->q);
+
 	return (str);
 }
 
