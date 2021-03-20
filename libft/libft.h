@@ -6,7 +6,7 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 14:33:16 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/18 15:55:16 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/20 13:01:16 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,6 +130,7 @@ char				*ft_joinsym(char *str, char c);
 char				**str_to_array(char **array, char *str);
 char				**newarr(char **arr, char *str);
 void				ft_swap(char *a, char *b);
+char				**nullarr(char **arr, char *str);
 
 #endif
 

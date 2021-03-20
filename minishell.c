@@ -6,7 +6,7 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/24 15:15:48 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/18 18:34:18 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/19 19:19:03 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -237,7 +237,12 @@ int		analysis(char *line)
 	return (0);
 }
 
-
+int		dol_sym(char c)
+{
+	if (c == '\\' || c == '\'' || c == '"' || c == '\0' || c == ' ')
+		return (0);
+	return (1);
+}
 
 char	*ecr(char *str, t_list *tmp)
 {
@@ -272,28 +277,20 @@ char	*ecrq(char *str, t_list *tmp)
 	return (str + 2);
 }
 
-int		dol_sym(char c)
-{
-	if (c == '\\' || c == '\'' || c == '"' || c == '\0' || c == ' ')
-		return (0);
-	return (1);
-}
+
 
 char	*dollar(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 {
 	char	*del;
 	char	*dlr;
 
+	if (ft_isdigit(*str))
+		return(++str);
 	while (dol_sym(*str))
 	{
 		del = p->dlr;
 		p->dlr = ft_joinsym(p->dlr, *str);
 		free(del);
-		if (ft_isdigit(*str))
-		{
-			str++;
-			break;
-		}
 		str++;
 	}
 	del = tmp->cmd;
@@ -308,18 +305,18 @@ char	*dollar(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 	return (str);
 }
 
-char	*qun(char *str, t_list *tmp, t_pt *p)
+char	*qun(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 {
 	char *del;
+
 	while (*str != '"')
 	{
 		if (*str == '\\')
 			str = ecrq(str, tmp);
 		if (*str == '$')
-			
+			str = dollar(++str, tmp, p, shell);
 		if (*str == '"')
 			break ;
-		// if ()
 		if (*str != '\\')
 		{
 			del = tmp->cmd;
@@ -334,6 +331,7 @@ char	*qun(char *str, t_list *tmp, t_pt *p)
 char	*qdeux(char *str, t_list *tmp, t_pt *p)
 {
 	char *del;
+
 	while (*str != '\'')
 	{
 		if (*str == '\'')
@@ -353,7 +351,7 @@ char	*comandas( char *str, t_list *tmp, t_pt *p, t_shell *shell)
 	char	*del;
 
 	if (*str == '"')
-		return (qun(++str, tmp, p));
+		return (qun(++str, tmp, p, shell));
 	if (*str == '\'')
 		return (qdeux(++str, tmp, p));
 	if (*str == '\\')
@@ -419,13 +417,47 @@ char	*ecrqarg(char *str, t_list *tmp, t_pt *p)
 	return (str + 2);
 }
 
-char	*qarg(char *str, t_list *tmp, t_pt *p)
+char	*dollararg(char *str, t_list *tmp, t_pt *p, t_shell *shell)
+{
+	char	*del;
+	char	*dlr;
+
+	if (ft_isdigit(*str))
+		return(++str);
+	while (dol_sym(*str))
+	{
+		del = p->dlr;
+		p->dlr = ft_joinsym(p->dlr, *str);
+		free(del);
+		str++;
+	}
+	del = p->safe;
+	dlr = get_env(p->dlr, shell);
+	if (dlr != NULL)
+	{
+		p->safe = ft_strjoin(p->safe, dlr);
+		free(del);
+	}
+	if ((*str == '\0' || *str == ' ') && p->safe != NULL)
+	{
+		tmp->arg = newarr(tmp->arg, p->safe);
+		free(p->safe);
+		p->safe = NULL;
+	}
+	free(p->dlr);
+	p->dlr = 0;
+	return (str);
+}
+
+char	*qarg(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 {
 	char *del;
 	while (*str != '"')
 	{
 		if (*str == '\\')
 			str = ecrqarg(str, tmp, p);
+		if (*str == '$')
+			str = dollararg(++str, tmp, p, shell);
 		if (*str == '"')
 			break ;
 		if (*str != '\\')
@@ -436,7 +468,7 @@ char	*qarg(char *str, t_list *tmp, t_pt *p)
 			str++;
 		}
 	}
-	if (*(str + 1) == '\0' || *(str + 1) == ' ')
+	if ((*(str + 1) == '\0' || *(str + 1) == ' ') && p->safe != NULL)
 	{
 		tmp->arg = newarr(tmp->arg, p->safe);
 		free(p->safe);
@@ -468,15 +500,17 @@ char	*qdeuxarg(char *str, t_list *tmp, t_pt *p)
 
 
 
-char	*argumentas(char *str, t_list *tmp, t_pt *p)
+char	*argumentas(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 {
 	char	*del;
 	if (*str == '"')
-		return (qarg(++str, tmp, p));
+		return (qarg(++str, tmp, p, shell));
 	if (*str == '\'')
 		return (qdeuxarg(++str, tmp, p));
 	if (*str == '\\')
 		return (ecrarg(str, tmp, p));
+	if (*str == '$')
+		return (dollararg(++str, tmp, p, shell));
 	del = p->safe;
 	p->safe = ft_joinsym(p->safe, *str);
 	free(del);
@@ -524,16 +558,55 @@ char	*ecrqrdr(char *str, t_list *tmp, t_pt *p)
 	return (str + 2);
 }
 
+char	*om_handle(char *str, t_list *tmp, t_pt *p)
+{
+	if
+}
 
+char	*dollarrdr(char *str, t_list *tmp, t_pt *p, t_shell *shell)
+{
+	char	*del;
+	char	*dlr;
 
+	if (ft_isdigit(*str) || *str == '\\')
+		return (om_handle(str, tmp, p));
+	while (dol_sym(*str))
+	{
+		del = p->dlr;
+		p->dlr = ft_joinsym(p->dlr, *str);
+		free(del);
+		str++;
+	}
+	del = p->safe;
+	dlr = get_env(p->dlr, shell);
+	if (dlr != NULL)
+	{
+		p->safe = ft_strjoin(p->safe, dlr);
+		free(del);
+	}
+	else
+		p->safe = ft_strdup("");
+	if ((*str == '\0' || *str == ' ') && p->safe != NULL)
+	{
+		tmp->rdr = newarr(tmp->rdr, p->safe);
+		free(p->safe);
+		p->safe = NULL;
+		p->q += 1;
+	}
+	free(p->dlr);
+	p->dlr = 0;
+	return (str);
+}
 
-char	*qrdr(char *str, t_list *tmp, t_pt *p)
+char	*qrdr(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 {
 	char *del;
 	while (*str != '"')
 	{
 		if (*str == '\\')
 			str = ecrqrdr(str, tmp, p);
+		if (*str == '$')
+			str = dollarrdr(++str, tmp, p, shell);
 		if (*str == '"')
 			break ;
 		if (*str != '\\')
@@ -544,7 +617,7 @@ char	*qrdr(char *str, t_list *tmp, t_pt *p)
 			str++;
 		}
 	}
-	if (*(str + 1) == '\0')
+	if ((*(str + 1) == '\0' || *(str + 1) == ' ') && p->safe != NULL)
 	{
 		tmp->rdr = newarr(tmp->rdr, p->safe);
 		free(p->safe);
@@ -575,22 +648,23 @@ char	*qdeuxrdr(char *str, t_list *tmp, t_pt *p)
 }
 
 
-char	*redirectas(char *str, t_list *tmp, t_pt *p)
+char	*redirectas(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 {
 	char	*del;
 	if (*str == '"')
-		return (qrdr(++str, tmp, p));
+		return (qrdr(++str, tmp, p, shell));
 	if (*str == '\'')
 		return (qdeuxrdr(++str, tmp, p));
 	if (*str == '\\')
 		return (ecrrdr(str, tmp, p));
+	if (*str == '$')
+		return (dollarrdr(++str, tmp, p, shell));
 	if (*str != ' ')
 	{
 		del = p->safe;
 		p->safe = ft_joinsym(p->safe, *str);
 		free(del);
 		str++;
-
 	}
 	if ((*str != '>' && p->q == 0) ||
 		((*str == ' ' || *str == '\0') && p->safe != NULL))
@@ -603,11 +677,11 @@ char	*redirectas(char *str, t_list *tmp, t_pt *p)
 	return (str);
 }
 
-char	*rdrdisperse(char *str, t_list *tmp, t_pt *p)
+char	*rdrdisperse(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 {
 	while (*str != '\0')
 	{
-		str = redirectas(str, tmp, p);
+		str = redirectas(str, tmp, p, shell);
 		if (*str == ' ')
 			str++;
 		if (p->q == 2)
@@ -628,7 +702,7 @@ void	sortout(t_list *tmp, t_pt *p, t_shell *shell)
 		if (*str == '>' || *str == '<')
 		{
 			p->q = 0;
-			str = rdrdisperse(str, tmp, p);
+			str = rdrdisperse(str, tmp, p, shell);
 		}
 		if (p->cmd == 0 && p->q == 2 && *str != ' ')
 		{
@@ -638,9 +712,8 @@ void	sortout(t_list *tmp, t_pt *p, t_shell *shell)
 		{
 			str++;
 		}
-
 		if (p->cmd == 1 && *str != ' ' && !(rd_sym(*str)))
-			str = argumentas(str, tmp, p);
+			str = argumentas(str, tmp, p, shell);
 	}
 	p->cmd = 0;
 	// printf("|%s|\n", tmp->cmd);

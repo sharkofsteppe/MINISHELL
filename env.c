@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 14:46:22 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/18 14:53:13 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/19 18:01:36 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -223,6 +223,8 @@ char	*get_env(char *name, t_shell *shell)
 
 	ret = NULL;
 	env = shell->env;
+	if (!name)
+		return (NULL);
 	while (env)
 	{
 		if (ft_strncmp(env->name, name, ft_strlen(name) + 1) == 0)
