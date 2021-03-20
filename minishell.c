@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/24 15:15:48 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/20 19:22:02 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/20 20:08:12 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -328,7 +328,7 @@ char	*qun(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 	return (++str);
 }
 
-char	*qdeux(char *str, t_list *tmp, t_pt *p)
+char	*qdeux(char *str, t_list *tmp)
 {
 	char *del;
 
@@ -353,7 +353,7 @@ char	*comandas( char *str, t_list *tmp, t_pt *p, t_shell *shell)
 	if (*str == '"')
 		return (qun(++str, tmp, p, shell));
 	if (*str == '\'')
-		return (qdeux(++str, tmp, p));
+		return (qdeux(++str, tmp));
 	if (*str == '\\')
 		return (ecr(str, tmp));
 	if (*str == '$' && *(str + 1) != '\\')
@@ -399,7 +399,7 @@ char	*ecrarg(char *str, t_list *tmp, t_pt *p)
 	return (str + 2);
 }
 
-char	*ecrqarg(char *str, t_list *tmp, t_pt *p)
+char	*ecrqarg(char *str, t_pt *p)
 {
 	char *sub;
 	char *del;
@@ -455,7 +455,7 @@ char	*qarg(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 	while (*str != '"')
 	{
 		if (*str == '\\')
-			str = ecrqarg(str, tmp, p);
+			str = ecrqarg(str, p);
 		if (*str == '$' && *(str + 1) != '\\')
 			str = dollararg(++str, tmp, p, shell);
 		if (*str == '"')
@@ -548,7 +548,7 @@ char	*ecrrdr(char *str, t_list *tmp, t_pt *p)
 	return (str + 2);
 }
 
-char	*ecrqrdr(char *str, t_list *tmp, t_pt *p)
+char	*ecrqrdr(char *str, t_pt *p)
 {
 	char *sub;
 	char *del;
@@ -568,10 +568,14 @@ char	*ecrqrdr(char *str, t_list *tmp, t_pt *p)
 
 char	*om_handle(char *str, t_list *tmp, t_pt *p)
 {
-	tmp->rdr = newarr(tmp->rdr, "");
-	p->q += 1;
-	return (++str);
-
+	if (*(str +1) == ' ' || *(str +1) == '\0')
+	{
+		tmp->rdr = newarr(tmp->rdr, "");
+		p->q += 1;
+		return (++str);
+	}
+	else
+		return (str + 1);
 }
 
 char	*dollarrdr(char *str, t_list *tmp, t_pt *p, t_shell *shell)
@@ -579,7 +583,7 @@ char	*dollarrdr(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 	char	*del;
 	char	*dlr;
 
-	if (ft_isdigit(*str) && *(str + 1) == ' ')
+	if (ft_isdigit(*str))
 		return (om_handle(str, tmp, p));
 	while (dol_sym(*str))
 	{
@@ -589,11 +593,10 @@ char	*dollarrdr(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 		str++;
 	}
 	del = p->safe;
-	printf("%s!!!\n", p->dlr);
-	printf("%s!!!\n", dlr);
+
+
 
 	dlr = get_env(p->dlr, shell);
-	printf("%s!!!\n", dlr);
 	if (dlr != NULL)
 	{
 		p->safe = ft_strjoin(p->safe, dlr);
@@ -617,7 +620,7 @@ char	*qrdr(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 	while (*str != '"')
 	{
 		if (*str == '\\')
-			str = ecrqrdr(str, tmp, p);
+			str = ecrqrdr(str, p);
 		if (*str == '$' && *(str + 1) != '\\')
 			str = dollarrdr(++str, tmp, p, shell);
 		if (*str == '"')
@@ -682,7 +685,6 @@ char	*redirectas(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 		// printf("!!!!%s!!!\n", p->safe);
 	}
 
-	printf("!!!!(%c)!!!\n", *str);
 	if ((*str != '>' && p->q == 0) ||
 		((*str == ' ' || *str == '\0') && p->safe != NULL))
 	{
@@ -693,7 +695,7 @@ char	*redirectas(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 	}
 	return (str);
 }
-
+//
 char	*rdrdisperse(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 {
 	while (*str != '\0')
@@ -752,32 +754,30 @@ void	goparty(t_list **head, t_pt *p, t_shell *shell)
 	while (tmp)
 	{
 		sortout(tmp, p, shell);
-		run_cmd(tmp, shell);
+		// run_cmd(tmp, shell);
 		tmp = tmp->next;
 	}
-	// tmp = *head;
-	// int i;
-	// int j;
-	// while (tmp)
-	// {
-	// 	printf("ЛИСТ НОМЕР %d:COMMAND |%s|\n",i, tmp->cmd);
-	// 	printf("ФЛАГ %d\n", tmp->flag);
-	// 	j = 0;
-	// 	while (j < size_arr(tmp->arg))
-	// 	{
-	// 		printf("TRUE ARG: |%s| ",tmp->arg[j]);
-	// 		j++;
-	// 	}
-	// 	j = 0;
-	// 	while (j < size_arr(tmp->rdr))
-	// 	{
-	// 		printf("\nREDIRECT ARG: |%s|\n",tmp->rdr[j]);
-	// 		j++;
-	// 	}
-	// 	printf("\n");
-	// 	tmp = tmp->next;
-	// 	i++;
-	// }
+	tmp = *head;
+	int j;
+	while (tmp)
+	{
+		// printf("ЛИСТ НОМЕР %d:COMMAND |%s|\n",i, tmp->cmd);
+		j = 0;
+		while (j < size_arr(tmp->arg))
+		{
+			printf("%s ",tmp->arg[j]);
+			j++;
+		}
+		printf("\n");
+		j = 0;
+		while (j < size_arr(tmp->rdr))
+		{
+			printf("\nREDIRECT ARG: |%s|\n",tmp->rdr[j]);
+			j++;
+		}
+		printf("\n");
+		tmp = tmp->next;
+	}
 	ft_lstclear(head,free);
 
 }
@@ -883,7 +883,6 @@ void	step_by_step(t_pt *p, t_list **head, t_shell *shell)
 {
 	char *newstr;
 	t_list *tmp;
-	int		flag;
 
 	every_move(p);
 	if (*p->fmt == '\0')
@@ -904,7 +903,6 @@ int		processing(char *line, t_shell *shell)
 {
 	t_pt	*p;
 	t_list	*head;
-	t_list 	*tmp;
 
 	p = init_ptr();
 	p->fmt = line;
