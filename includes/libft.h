@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 14:33:16 by gesperan          #+#    #+#             */
-/*   Updated: 2021/02/25 19:23:55 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/20 18:59:06 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,24 @@ typedef struct		s_list
 {
 	void			*content;
 	struct s_list	*next;
+	char			*cmd;
+	char			**arg;
+	char			**rdr;
+	int				flag;
 }					t_list;
+
+
+
+typedef struct		s_pt
+{
+	char	*copy;
+	char	*fmt;
+	int		cut;
+	int		cmd;
+	char	*safe;
+	char	*dlr;
+	int		q;
+}					t_pt;
 
 enum				e_errorlist
 {
@@ -108,5 +125,16 @@ int					ps_cub(char *s, int fd, int err);
 char				*ft_fillstr(char c, int len);
 int					size_arr(char **str);
 void				*ft_memory_free(char **str, size_t count);
-int					finder(const char *str, const char c);
+t_list				*ft_lstnew_pipe(void *content);
+char				*ft_joinsym(char *str, char c);
+char				**str_to_array(char **array, char *str);
+char				**newarr(char **arr, char *str);
+void				ft_swap(char *a, char *b);
+char				**nullarr(char **arr, char *str);
+
 #endif
+
+
+// echo echo"'$PWD'"
+// '\f'
+// '\''

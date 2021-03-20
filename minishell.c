@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/24 15:15:48 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/20 14:55:01 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/20 19:09:25 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -745,30 +745,32 @@ void	goparty(t_list **head, t_pt *p, t_shell *shell)
 	while (tmp)
 	{
 		sortout(tmp, p, shell);
+		run_cmd(tmp, shell);
 		tmp = tmp->next;
 	}
-	tmp = *head;
-	int i;
-	int j;
-	while (tmp)
-	{
-		printf("ЛИСТ НОМЕР %d:COMMAND |%s|\n",i, tmp->cmd);
-		j = 0;
-		while (j < size_arr(tmp->arg))
-		{
-			printf("TRUE ARG: |%s| ",tmp->arg[j]);
-			j++;
-		}
-		j = 0;
-		while (j < size_arr(tmp->rdr))
-		{
-			printf("\nREDIRECT ARG: |%s|\n",tmp->rdr[j]);
-			j++;
-		}
-		printf("\n");
-		tmp = tmp->next;
-		i++;
-	}
+	// tmp = *head;
+	// int i;
+	// int j;
+	// while (tmp)
+	// {
+	// 	printf("ЛИСТ НОМЕР %d:COMMAND |%s|\n",i, tmp->cmd);
+	// 	printf("ФЛАГ %d\n", tmp->flag);
+	// 	j = 0;
+	// 	while (j < size_arr(tmp->arg))
+	// 	{
+	// 		printf("TRUE ARG: |%s| ",tmp->arg[j]);
+	// 		j++;
+	// 	}
+	// 	j = 0;
+	// 	while (j < size_arr(tmp->rdr))
+	// 	{
+	// 		printf("\nREDIRECT ARG: |%s|\n",tmp->rdr[j]);
+	// 		j++;
+	// 	}
+	// 	printf("\n");
+	// 	tmp = tmp->next;
+	// 	i++;
+	// }
 	ft_lstclear(head,free);
 
 }
@@ -933,18 +935,16 @@ int		processing(char *line, t_shell *shell)
 int		main(int argc, char **argv, char **env)
 {
 	char	*line;
-	int		loop;
-	int		read;
 	t_shell	shell;
 
 	(void)argc;
 	(void)argv;
-	loop = 1;
 	shell.env = NULL;
 	init_envp(env, &shell.env);
-	while (loop == 1)
+	while (1)
 	{
-		read = get_next_line(0, &line);
+		print_promt();
+		get_next_line(0, &line);
 		if (analysis(line) == 0)
 			processing(line, &shell);
 		else

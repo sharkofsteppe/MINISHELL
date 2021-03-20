@@ -1,31 +1,34 @@
-.PHONY: all clean fclean re
-
-NAME		=	minishell
-CFLAGS		=	-Wall -Wextra
-RM			=	rm -f
-CC			=	gcc
-INC			=	-Iincludes -I.
-LIB			=	-Llibft -lft
-EXEC_DIR	=	srcs/executor/
-EXEC_SRCS	=	minishell.c \
-				utils.c \
-				$(EXEC_DIR)exec_cd.c \
-				$(EXEC_DIR)exec_cmd.c \
-				$(EXEC_DIR)exec_echo.c \
-				$(EXEC_DIR)exec_env.c \
-				$(EXEC_DIR)exec_exit.c \
-				$(EXEC_DIR)exec_pwd.c \
-				$(EXEC_DIR)exec_setenv.c \
-				$(EXEC_DIR)exec_unsetenv.c
-EXEC_OBJS	=	$(EXEC_SRCS:.c=.o)
-all: $(NAME)
-%o : %c
-	$(CC) $(CFLAGS) -c $< -o $@ $(INC)
-$(NAME): $(EXEC_OBJS)
-	make -C ./libft
-	$(CC) $(CFLAGS) $(LIB) $(INC) $(EXEC_OBJS) -o $(NAME)
+SRCDIR	=	srcs/
+LIBFTDIR=	libft/
+UTILSDIR=	utils/
+PARSERDIR=	parse/
+LIBFT	=	${LIBFTDIR}libft.a
+HEADERS	=	${addprefix includes/, minishell.h}
+NAME	=	minishell
+SRCS	=	${addprefix ${SRCDIR}, e_cd.c e_echo.c e_env.c e_export.c e_pwd.c e_unset.c e_promt.c e_signal.c e_exit.c e_cmd.c e_redd.c}
+UTILS	=	${addprefix ${SRCDIR}${UTILSDIR}, e_error.c e_free.c e_utils.c e_sort_envp.c}
+PARSER	=	minishell.c
+OBJS	=	${SRCS:.c=.o} ${UTILS:.c=.o} ${PARSER:.c=.o}
+LIBS	=	-Llibft -lft
+INCL	=	-Iincludes -Ilibft
+CC		=	gcc
+CFLAGS	=	-Wall -Wextra -g -fsanitize=address #-Werror
+RM		=	rm
+MAKES	=	makes
+all: ${MAKES} ${NAME}
+${NAME}: ${OBJS} ${HEADERS} ${LIBFT} Makefile
+	${CC} ${CFLAGS} ${INCL} ${LIBS} ${OBJS} -o ${NAME}
+${MAKES}:
+	@${MAKE} -sC ${LIBFTDIR}
+%.o : %.c ${HEADERS}
+	@${CC} -c ${CFLAGS} ${INCL} $< -o $@
+${LIBFT}:
+	@${MAKE} -sC ${LIBFTDIR}
 clean:
-	$(RM) $(EXEC_OBJS)
+	@${MAKE} -sC ${LIBFTDIR} clean
+	@${RM} -f ${OBJS}
 fclean: clean
-	$(RM) $(NAME)
-re: fclean all
+	@${MAKE} -sC ${LIBFTDIR} fclean
+	@${RM} -f ${NAME}
+re:	fclean all
+.PHONY: all clean fclean re

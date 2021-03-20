@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/02/24 17:57:50 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/18 14:41:44 by ezachari         ###   ########.fr       */
+/*   Created: 2021/03/01 14:16:02 by ezachari          #+#    #+#             */
+/*   Updated: 2021/03/20 18:58:47 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <fcntl.h>
 # include <sys/types.h>
 # include <dirent.h>
+# include "libft.h"
 # define RED "\x1b[31m"
 # define GRE "\x1b[32m"
 # define YEL "\x1b[33m"
@@ -87,11 +88,10 @@ char			*get_env(char *name, t_shell *shell);
 void			free_split(char **split);
 void			print_promt(void);
 void			print_error(char *error, char *ext, char *cmd, int flag);
-int				run_cmd(char **cmd, char **argv, t_shell *shell);
+int				run_cmd(t_list *tmp, t_shell *shell);
 int				set_env(char *name, char *new, t_shell *shell);
-void			handle_isignal(int sig);
-void			handle_qsignal(int sig);
-void			handle_exvsig(int sig);
+void			handle_main(int sig);
+void			handle_child(int sig);
 int				builtin_cd(char **argv, int size, t_shell *shell);
 int				builtin_pwd(void);
 int				builtin_env(t_shell *shell);
@@ -103,4 +103,6 @@ void			sort_envp(t_envp **envp);
 int				envpsize_2(t_envp *envp);
 void			envp_clear(t_envp **env, void (*del)(void*));
 int				set_status(int err);
+int				run_pipe(t_list **tmp, t_shell *shell);
+void			reddirection(char **rdr, t_shell *shell);
 #endif
