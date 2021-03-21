@@ -6,7 +6,7 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/24 15:15:48 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/21 14:24:56 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/21 17:53:39 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,17 @@ t_pt	*init_ptr(void)
 	return (ptr);
 }
 
+void	justuer(int *i, char *fmt)
+{
+	char	c;
+
+	c = fmt[*i];
+	(*i)++;
+	while (fmt[*i] != c)
+		(*i)++;
+}
+
+
 void	squots(char **fmt, char c, int *flag)
 {
 	int	interuption;
@@ -45,6 +56,7 @@ void	squots(char **fmt, char c, int *flag)
 		else if (**fmt == '\0')
 		{
 			ft_putendl_fd("syntax error: unclosed quotes", 1);
+			g_status = 1600;
 			*flag = 1;
 			break ;
 		}
@@ -62,6 +74,7 @@ void	squotsl(char **fmt, char c, int *flag)
 		if (**fmt == '\0')
 		{
 			ft_putendl_fd("syntax error: unclosed quotes", 1);
+			g_status = 1601;
 			*flag = 1;
 			break ;
 		}
@@ -130,6 +143,8 @@ int		doublesym(char *fmt, char c, char k)
 	i = -1;
 	while (fmt[++i])
 	{
+		if (fmt[i] == '"' || fmt[i] == '\'')
+			justuer(&i, fmt);
 		if (fmt[i] == c)
 		{
 			i++;
@@ -153,10 +168,13 @@ int		checkcolons(char *fmt)
 		|| doublesym(fmt, '|', '|'))
 	{
 		ft_putendl_fd("syntax error near unexpected token", 1);
+		g_status = 258;
 		return (1);
 	}
 	return (0);
 }
+
+
 
 int		checkrdr(char *fmt)
 {
@@ -167,6 +185,8 @@ int		checkrdr(char *fmt)
 	ret = 0;
 	while (fmt[++i])
 	{
+		if (fmt[i] == '"' || fmt[i] == '\'')
+			justuer(&i, fmt);
 		if (fmt[i] == '>' && fmt[i + 1] == '>' && ret == 0)
 			ret = doublesym(&fmt[++i], '>', '>');
 		if (fmt[i] == '>' && ret == 0)
@@ -177,10 +197,12 @@ int		checkrdr(char *fmt)
 			ret = doublesym(&fmt[i], '<', '<');
 		if (fmt[i] == '<' && fmt[i + 1] == ' ' && ret == 0)
 			ret = doublesym(&fmt[i], '<', '>');
-
 	}
 	if (ret == 1)
+	{
 		ft_putendl_fd("syntax error near unexpected token", 1);
+		g_status = 258;
+	}
 	return (ret);
 }
 
@@ -193,12 +215,16 @@ int		doublerdr(char *fmt)
 	ret = 0;
 	while (fmt[++i])
 	{
+		if (fmt[i] == '"' || fmt[i] == '\'')
+			justuer(&i, fmt);
 		if (fmt[i] == '>' && fmt[i + 1] == '>' && ret == 0)
 			ret = doublesym(&fmt[++i], '>', ';');
 	}
 	i = -1;
 	while (fmt[++i])
 	{
+		if (fmt[i] == '"' || fmt[i] == '\'')
+			justuer(&i, fmt);
 		if (fmt[i] == '>' && fmt[i + 1] == '>' && ret == 0)
 			ret = doublesym(&fmt[++i], '>', '|');
 	}
@@ -217,7 +243,10 @@ int		rdractedeux(char *fmt)
 		doublesym(fmt, '>', '|'))
 		ret = 1;
 	if (ret == 1)
+	{
 		ft_putendl_fd("syntax error near unexpected token", 1);
+		g_status = 258;
+	}
 	return (ret);
 }
 
@@ -239,7 +268,7 @@ int		analysis(char *line)
 
 int		dol_sym(char c)
 {
-	if (c == '\\' || c == '\'' || c == '"' || c == '\0' || c == ' ')
+	if (c == '\\' || c == '\'' || c == '"' || c == '\0' || c == ' ' || c == '$')
 		return (0);
 	return (1);
 }
@@ -417,13 +446,25 @@ char	*ecrqarg(char *str, t_pt *p)
 	return (str + 2);
 }
 
+char	*om_arg(char *str, t_list *tmp, t_pt *p)
+{
+	if (*(str +1) == ' ' || *(str +1) == '\0')
+	{
+		tmp->arg = newarr(tmp->arg, "");
+		p->q += 1;
+		return (++str);
+	}
+	else
+		return (str + 1);
+}
+
 char	*dollararg(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 {
 	char	*del;
 	char	*dlr;
 
 	if (ft_isdigit(*str))
-		return(++str);
+		return(om_arg(str, tmp, p));
 	while (dol_sym(*str))
 	{
 		del = p->dlr;
@@ -448,6 +489,31 @@ char	*dollararg(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 	p->dlr = 0;
 	return (str);
 }
+char	*dollarqarg(char *str, t_list *tmp, t_pt *p, t_shell *shell)
+{
+	char	*del;
+	char	*dlr;
+
+	if (ft_isdigit(*str))
+		return(om_arg(str, tmp, p));
+	while (dol_sym(*str))
+	{
+		del = p->dlr;
+		p->dlr = ft_joinsym(p->dlr, *str);
+		free(del);
+		str++;
+	}
+	del = p->safe;
+	dlr = get_env(p->dlr, shell);
+	if (dlr != NULL)
+	{
+		p->safe = ft_strjoin(p->safe, dlr);
+		free(del);
+	}
+	free(p->dlr);
+	p->dlr = 0;
+	return (str);
+}
 
 char	*qarg(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 {
@@ -457,7 +523,7 @@ char	*qarg(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 		if (*str == '\\')
 			str = ecrqarg(str, p);
 		if (*str == '$' && *(str + 1) != '\\')
-			str = dollararg(++str, tmp, p, shell);
+			str = dollarqarg(++str, tmp, p, shell);
 		if (*str == '"')
 			break ;
 		if (*str != '\\')
@@ -516,7 +582,7 @@ char	*argumentas(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 	free(del);
 	if (*str != '\0')
 		str++;
-	if ((*str == ' ' || *str == '\0' || *str == '>' || *str == '<') && *p->safe != '\0')
+	if ((*str == ' ' || *str == '\0' || *str == '>' || *str == '<') && p->safe != NULL)
 	{
 		tmp->arg = newarr(tmp->arg, p->safe);
 		free(p->safe);
@@ -671,8 +737,6 @@ char	*rec_sym(char *str, t_pt *p)
 	del = p->safe;
 	p->safe = ft_joinsym(p->safe, *str);
 	free(del);
-	// if (*str == '$' && *(str + 1) == '\\')
-	// 	str += 2;
 	str++;
 	return (str);
 }
@@ -764,18 +828,18 @@ void	goparty(t_list **head, t_pt *p, t_shell *shell)
 	int j;
 	while (tmp)
 	{
-		// printf("ЛИСТ НОМЕР %d:COMMAND |%s|\n",i, tmp->cmd);
+		printf("COMMAND |%s|\n", tmp->cmd);
 		j = 0;
 		while (j < size_arr(tmp->arg))
 		{
-			printf("TRUE ARG : |%s|",tmp->arg[j]);
+			printf("TRUE ARG :|%s|\n",tmp->arg[j]);
 			j++;
 		}
-		printf("\n");
+
 		j = 0;
 		while (j < size_arr(tmp->rdr))
 		{
-			printf("\nREDIRECT ARG: |%s|\n",tmp->rdr[j]);
+			printf("\nREDIRECT ARG:|%s|\n",tmp->rdr[j]);
 			j++;
 		}
 		printf("\n");
