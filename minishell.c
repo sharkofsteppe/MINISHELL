@@ -6,7 +6,7 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/24 15:15:48 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/20 20:08:12 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/21 14:24:56 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -516,7 +516,7 @@ char	*argumentas(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 	free(del);
 	if (*str != '\0')
 		str++;
-	if ((*str == ' ' || *str == '\0') && *p->safe != '\0')
+	if ((*str == ' ' || *str == '\0' || *str == '>' || *str == '<') && *p->safe != '\0')
 	{
 		tmp->arg = newarr(tmp->arg, p->safe);
 		free(p->safe);
@@ -663,10 +663,22 @@ char	*qdeuxrdr(char *str, t_list *tmp, t_pt *p)
 	return (++str);
 }
 
+char	*rec_sym(char *str, t_pt *p)
+{
+	char	*del;
+	if (p->q == 1 && (*str == '>' || *str == '<'))
+		return (str);
+	del = p->safe;
+	p->safe = ft_joinsym(p->safe, *str);
+	free(del);
+	// if (*str == '$' && *(str + 1) == '\\')
+	// 	str += 2;
+	str++;
+	return (str);
+}
 
 char	*redirectas(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 {
-	char	*del;
 	if (*str == '"')
 		return (qrdr(++str, tmp, p, shell));
 	if (*str == '\'')
@@ -676,17 +688,9 @@ char	*redirectas(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 	if (*str == '$' && *(str + 1) != '\\')
 		return (dollarrdr(++str, tmp, p, shell));
 	if (*str != ' ')
-	{
-		// printf("!!!!%s!!!\n", p->safe);
-		del = p->safe;
-		p->safe = ft_joinsym(p->safe, *str);
-		free(del);
-		str++;
-		// printf("!!!!%s!!!\n", p->safe);
-	}
-
+		str = rec_sym(str, p);
 	if ((*str != '>' && p->q == 0) ||
-		((*str == ' ' || *str == '\0') && p->safe != NULL))
+		((*str == ' ' || *str == '\0') && p->safe != NULL) || ((*str == '>' || *str == '<') && p->q == 1))
 	{
 		tmp->rdr = newarr(tmp->rdr, p->safe);
 		free(p->safe);
@@ -695,7 +699,7 @@ char	*redirectas(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 	}
 	return (str);
 }
-//
+
 char	*rdrdisperse(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 {
 	while (*str != '\0')
@@ -706,7 +710,6 @@ char	*rdrdisperse(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 		if (p->q == 2)
 			break;
 	}
-
 	return (str);
 }
 
@@ -765,7 +768,7 @@ void	goparty(t_list **head, t_pt *p, t_shell *shell)
 		j = 0;
 		while (j < size_arr(tmp->arg))
 		{
-			printf("%s ",tmp->arg[j]);
+			printf("TRUE ARG : |%s|",tmp->arg[j]);
 			j++;
 		}
 		printf("\n");
