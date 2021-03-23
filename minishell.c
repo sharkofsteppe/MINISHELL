@@ -6,7 +6,7 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/24 15:15:48 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/23 14:21:17 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/23 14:28:19 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -801,7 +801,7 @@ void	sortout(t_list *tmp, t_pt *p, t_shell *shell)
 		{
 			str++;
 		}
-		if (p->cmd == 1 && *str != ' ' && !(rd_sym(*str)))
+		if (p->cmd == 1 && *str != ' ' && !(rd_sym(*str)) && *str != '\0')
 			str = argumentas(str, tmp, p, shell);
 	}
 	p->cmd = 0;
