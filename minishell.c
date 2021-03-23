@@ -6,7 +6,7 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/24 15:15:48 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/21 17:53:39 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/23 14:21:17 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -379,13 +379,15 @@ char	*comandas( char *str, t_list *tmp, t_pt *p, t_shell *shell)
 {
 	char	*del;
 
+	printf("%s\n", str);
+
 	if (*str == '"')
 		return (qun(++str, tmp, p, shell));
 	if (*str == '\'')
 		return (qdeux(++str, tmp));
 	if (*str == '\\')
 		return (ecr(str, tmp));
-	if (*str == '$' && *(str + 1) != '\\')
+	if (*str == '$' && *(str + 1) != '\\' && *(str + 1) != '\0')
 		return (dollar(++str, tmp, p, shell));
 	del = tmp->cmd;
 	tmp->cmd = ft_joinsym(tmp->cmd, *str);
