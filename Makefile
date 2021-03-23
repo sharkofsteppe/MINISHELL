@@ -9,10 +9,10 @@ SRCS	=	${addprefix ${SRCDIR}, e_cd.c e_echo.c e_env.c e_export.c e_pwd.c e_unset
 UTILS	=	${addprefix ${SRCDIR}${UTILSDIR}, e_error.c e_free.c e_utils.c e_sort_envp.c}
 PARSER	=	minishell.c
 OBJS	=	${SRCS:.c=.o} ${UTILS:.c=.o} ${PARSER:.c=.o}
-LIBS	=	-Llibft -lft
+LIBS	=	-ltermcap -Llibft -lft
 INCL	=	-Iincludes -Ilibft
 CC		=	gcc
-CFLAGS	=	-Wall -Wextra 
+CFLAGS	=	-Wall -Wextra #-g -fsanitize=address
 RM		=	rm
 MAKES	=	makes
 all: ${MAKES} ${NAME}

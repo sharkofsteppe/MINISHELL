@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/24 15:15:48 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/23 14:28:19 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/23 21:07:32 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -823,30 +823,31 @@ void	goparty(t_list **head, t_pt *p, t_shell *shell)
 	while (tmp)
 	{
 		sortout(tmp, p, shell);
-		// run_cmd(tmp, shell);
+		if (tmp->cmd)
+			run_cmd(tmp, shell);
 		tmp = tmp->next;
 	}
-	tmp = *head;
-	int j;
-	while (tmp)
-	{
-		printf("COMMAND |%s|\n", tmp->cmd);
-		j = 0;
-		while (j < size_arr(tmp->arg))
-		{
-			printf("TRUE ARG :|%s|\n",tmp->arg[j]);
-			j++;
-		}
+	// tmp = *head;
+	// int j;
+	// while (tmp)
+	// {
+	// 	printf("COMMAND |%s|\n", tmp->cmd);
+	// 	j = 0;
+	// 	while (j < size_arr(tmp->arg))
+	// 	{
+	// 		printf("TRUE ARG :|%s|\n",tmp->arg[j]);
+	// 		j++;
+	// 	}
 
-		j = 0;
-		while (j < size_arr(tmp->rdr))
-		{
-			printf("\nREDIRECT ARG:|%s|\n",tmp->rdr[j]);
-			j++;
-		}
-		printf("\n");
-		tmp = tmp->next;
-	}
+	// 	j = 0;
+	// 	while (j < size_arr(tmp->rdr))
+	// 	{
+	// 		printf("\nREDIRECT ARG:|%s|\n",tmp->rdr[j]);
+	// 		j++;
+	// 	}
+	// 	printf("\n");
+	// 	tmp = tmp->next;
+	// }
 	ft_lstclear(head,free);
 
 }
@@ -1006,24 +1007,177 @@ int		processing(char *line, t_shell *shell)
 	return (0);
 }
 
-int		main(int argc, char **argv, char **env)
+// int		main(int argc, char **argv, char **env)
+// {
+// 	char	*line;
+// 	t_shell	shell;
+
+// 	(void)argc;
+// 	(void)argv;
+// 	shell.env = NULL;
+// 	init_envp(env, &shell.env);
+// 	while (1)
+// 	{
+// 		print_promt();
+// 		get_next_line(0, &line);
+// 		if (analysis(line) == 0)
+// 			processing(line, &shell);
+// 		else
+// 			printf("SOMETHING WENT WRONG\n");
+// 		free(line);
+// 	}
+// 	return (0);
+// }
+
+int		check_term(t_shell *shell, int argc, char **argv)
 {
-	char	*line;
-	t_shell	shell;
+	char	*type;
+	char	buffer[2048];
 
 	(void)argc;
 	(void)argv;
-	shell.env = NULL;
-	init_envp(env, &shell.env);
+	if (!isatty(STDIN_FILENO))
+		return (1);
+	type = get_env("TERM", shell);
+	if (type == NULL || tgetent(buffer, type) != 1)
+	{
+		ft_putendl_fd("Can not find TERM or termcap base", STDERR_FILENO);
+		return (1);
+	}
+	ft_bzero(&shell->term, sizeof(struct termios));
+	tcgetattr(STDIN_FILENO, &shell->term);
+	shell->term.c_lflag &= ~(ICANON | ECHO);
+	shell->term.c_cc[VMIN] = 1;
+	shell->term.c_cc[VTIME] = 0;
+	tcsetattr(STDIN_FILENO, TCSANOW, &shell->term);
+	return (0);
+}
+
+int		readkey(void)
+{
+	char	buf[2];
+	char	c;
+
+	while (read(STDIN_FILENO, &c, 1) != 1)
+		;
+	if (c == '\e')
+	{
+		if (read(STDIN_FILENO, &buf[0], 1) != 1)
+			return ('\e');
+		if (read(STDIN_FILENO, &buf[1], 1) != 1)
+			return ('\e');
+		if (buf[0] == '[')
+		{
+			if (buf[1] == 'A')
+				return (24);
+			if (buf[1] == 'B')
+				return (25);
+		}
+	}
+	return (c);
+}
+
+void	handle_backspace(t_shell *shell)
+{
+	int		len;
+
+	len = ft_strlen(shell->buf);
+	if (len && shell->buf[len - 1])
+		ft_putstr_fd("\b \b", 1);
+	shell->buf[len - 1] = '\0';
+}
+
+void	handle_ctrld(char *c)
+{
+	if (shell.buf[0] == '\0')
+	{
+		ft_strlcpy(shell.buf, "exit", 6);
+		*c = '\n';
+	}
+}
+
+void	handle_ctrlc(t_shell *shell)
+{
+	ft_putstr_fd("\n\r", STDERR_FILENO);
+	print_promt();
+	ft_bzero(shell->buf, 2048);
+}
+
+char	*readline(t_shell *shell)
+{
+	char	*line;
+	char	c;
+	int		key;
+	char	*leak;
+
+	line = NULL;
+	print_promt();
+	ft_bzero(shell->buf, 2048);
 	while (1)
 	{
+		key = readkey();
+		c = (char)key;
+		if (ft_isprint(c) || c == '\n')
+		{
+			write(STDOUT_FILENO, &c, 1);
+			if (c != '\n')
+				ft_strlcat(shell->buf, &c, 2048);
+		}
+		// if (key == 24)
+		// 	handle_key_up(shell);
+		// if (key == 25)
+		// 	handle_key_down(shell);
+		if (key == 3)
+			handle_ctrlc(shell);
+		if (key == 4)
+			handle_ctrld(&c);
+		if (key == 127)
+			handle_backspace(shell);
+		if (c == 10)
+			break ;
+	}
+	line = ft_calloc(ft_strlen(shell->buf), 2);
+	ft_strlcpy(line, shell->buf, 2048);
+	return (line);
+}
+
+void	handle_sig(int sig)
+{
+	if (SIGINT == sig)
+	{
+		ft_putstr_fd("\n", 1);
 		print_promt();
-		get_next_line(0, &line);
+		ft_bzero(shell.buf, 2048);
+	}
+	if (SIGQUIT == sig)
+	{
+		ft_putstr_fd("^\\Quit: ", STDERR_FILENO);
+		ft_putnbr_fd(sig, STDERR_FILENO);
+		// exit (g_status);
+	}
+}
+
+int		main(int argc, char **argv, char **env)
+{
+	char	buffer[2048];
+	char	*line;
+
+	g_status = 0;
+	shell.env = NULL;
+	init_envp(env, &shell.env);
+	g_status = check_term(&shell, argc, argv);
+	while (1)
+	{
+		signal(SIGINT, handle_sig);
+		signal(SIGQUIT, handle_sig);
+		line = readline(&shell);
+		// printf("|%s|\n", line);
 		if (analysis(line) == 0)
 			processing(line, &shell);
 		else
-			printf("SOMETHING WENT WRONG\n");
+			printf("|%s|\n", line);
 		free(line);
+		// free(shell.line);
 	}
-	return (0);
+	return (EXIT_SUCCESS);
 }

@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 14:16:02 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/20 18:58:47 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/23 20:48:48 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,11 @@
 # include <string.h>
 # include <fcntl.h>
 # include <sys/types.h>
+# include <termcap.h>
+# include <signal.h>
+# include <curses.h>
+# include <term.h>
+# include <stdio.h>
 # include <dirent.h>
 # include "libft.h"
 # define RED "\x1b[31m"
@@ -27,12 +32,6 @@
 # define MAG "\x1b[35m"
 # define CYA "\x1b[36m"
 # define RES "\x1b[0m"
-# define MTRUE 1
-# define MFALSE 0
-# define MNONE -1
-
-int				g_status;
-
 typedef struct	s_envp
 {
 	char			*name;
@@ -51,11 +50,10 @@ typedef struct	s_cmd
 
 typedef struct	s_shell
 {
-	char	**envp;
-	t_envp	*env;
-	char	**e_envp;
-	char	**argv;
-	t_cmd	**cmd;
+	char			buf[2048];
+	char			*line;
+	struct termios	term;
+	t_envp			*env;
 }				t_shell;
 
 typedef struct	s_bin
@@ -75,6 +73,9 @@ typedef struct	s_sort
 	char	*content;
 	char	*tmpcontent;
 }				t_sort;
+
+int				g_status;
+t_shell			shell;
 
 char			**list_to_mass(t_envp **head);
 int				get_argv_size(char **argv);
