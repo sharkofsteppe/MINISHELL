@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 14:16:02 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/23 20:48:48 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/24 19:45:45 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@
 # include <sys/types.h>
 # include <termcap.h>
 # include <signal.h>
-# include <curses.h>
 # include <term.h>
 # include <stdio.h>
 # include <dirent.h>
@@ -32,6 +31,8 @@
 # define MAG "\x1b[35m"
 # define CYA "\x1b[36m"
 # define RES "\x1b[0m"
+# define MAXBUF 9048
+
 typedef struct	s_envp
 {
 	char			*name;
@@ -50,8 +51,12 @@ typedef struct	s_cmd
 
 typedef struct	s_shell
 {
-	char			buf[2048];
-	char			*line;
+	char			buf[MAXBUF];
+	int				ind;
+	char			**history;
+	int				index;
+	int				status;
+	pid_t			pid;
 	struct termios	term;
 	t_envp			*env;
 }				t_shell;
@@ -74,8 +79,7 @@ typedef struct	s_sort
 	char	*tmpcontent;
 }				t_sort;
 
-int				g_status;
-t_shell			shell;
+t_shell			g_shell;
 
 char			**list_to_mass(t_envp **head);
 int				get_argv_size(char **argv);
@@ -106,4 +110,5 @@ void			envp_clear(t_envp **env, void (*del)(void*));
 int				set_status(int err);
 int				run_pipe(t_list **tmp, t_shell *shell);
 void			reddirection(char **rdr, t_shell *shell);
+int				put_int(int c);
 #endif

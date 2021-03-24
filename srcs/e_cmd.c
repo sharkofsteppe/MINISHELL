@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 16:51:43 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/20 19:05:24 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/24 15:34:23 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ int		run_builtin(char *cmd, char **argv, t_shell *shell)
 		return (builtin_export(argv, shell));
 	else if (ft_strncmp(cmd, "unset", 6) == 0)
 		builtin_unset(argv, shell);
-	return (g_status);
+	return (g_shell.status);
 }
 
 int		check_builtin(char *cmd)
@@ -239,6 +239,7 @@ char	**add_cmd_to_arg(char **arg, char *cmd)
 int		run_cmd(t_list *tmp, t_shell *shell)
 {
 	pid_t	pid;
+	char	**env;
 	char	*command;
 
 	tmp->arg = add_cmd_to_arg(tmp->arg, tmp->cmd);
@@ -246,16 +247,23 @@ int		run_cmd(t_list *tmp, t_shell *shell)
 	if (check_builtin(tmp->cmd) == 1)
 		return (run_builtin(tmp->cmd, tmp->arg, shell));
 	command = search_bin(tmp->cmd, shell);
+	if (!command)
+		command = ft_strdup(tmp->cmd);
+	env = list_to_mass(&shell->env);
 	pid = fork();
 	// handle_child(SIGQUIT);
 	if (pid == 0)
 	{
-		execve(command, tmp->arg, list_to_mass(&shell->env));
+		execve(command, tmp->arg, env);
 		print_error("minibash ", ": command not found", tmp->cmd, 0);
+		free_split(env);
+		free(command);
 		exit(1);
 	}
 	else if (pid < 0)
 		ft_putstr_fd("fork failed", STDERR_FILENO);
+	else
+	free_split(env);
 	free(command);
 	return (wait_pid(pid));
 }

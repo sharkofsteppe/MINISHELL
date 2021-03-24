@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signal.c                                           :+:      :+:    :+:   */
+/*   e_signal.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 15:57:51 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/19 18:20:53 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/24 15:33:37 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void	handle_main(int sig)
 {
 	if (sig == SIGINT)
 	{
-		g_status = 1;
+		g_shell.status = 1;
 		ft_putstr_fd("\b\b  \b\b", STDOUT_FILENO);
 		ft_putstr_fd("\n", STDERR_FILENO);
 		print_promt();

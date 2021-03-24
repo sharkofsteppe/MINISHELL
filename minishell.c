@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/24 15:15:48 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/23 21:07:32 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/24 20:03:44 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void	squots(char **fmt, char c, int *flag)
 		else if (**fmt == '\0')
 		{
 			ft_putendl_fd("syntax error: unclosed quotes", 1);
-			g_status = 1600;
+			g_shell.status = 1600;
 			*flag = 1;
 			break ;
 		}
@@ -74,7 +74,7 @@ void	squotsl(char **fmt, char c, int *flag)
 		if (**fmt == '\0')
 		{
 			ft_putendl_fd("syntax error: unclosed quotes", 1);
-			g_status = 1601;
+			g_shell.status = 1601;
 			*flag = 1;
 			break ;
 		}
@@ -168,7 +168,7 @@ int		checkcolons(char *fmt)
 		|| doublesym(fmt, '|', '|'))
 	{
 		ft_putendl_fd("syntax error near unexpected token", 1);
-		g_status = 258;
+		g_shell.status = 258;
 		return (1);
 	}
 	return (0);
@@ -201,7 +201,7 @@ int		checkrdr(char *fmt)
 	if (ret == 1)
 	{
 		ft_putendl_fd("syntax error near unexpected token", 1);
-		g_status = 258;
+		g_shell.status = 258;
 	}
 	return (ret);
 }
@@ -245,7 +245,7 @@ int		rdractedeux(char *fmt)
 	if (ret == 1)
 	{
 		ft_putendl_fd("syntax error near unexpected token", 1);
-		g_status = 258;
+		g_shell.status = 258;
 	}
 	return (ret);
 }
@@ -379,7 +379,7 @@ char	*comandas( char *str, t_list *tmp, t_pt *p, t_shell *shell)
 {
 	char	*del;
 
-	printf("%s\n", str);
+	// printf("%s\n", str);
 
 	if (*str == '"')
 		return (qun(++str, tmp, p, shell));
@@ -824,7 +824,11 @@ void	goparty(t_list **head, t_pt *p, t_shell *shell)
 	{
 		sortout(tmp, p, shell);
 		if (tmp->cmd)
+		{
+			// if (tmp->flag == 1)
+			// 	run_pipeline();
 			run_cmd(tmp, shell);
+		}
 		tmp = tmp->next;
 	}
 	// tmp = *head;
@@ -1029,27 +1033,27 @@ int		processing(char *line, t_shell *shell)
 // 	return (0);
 // }
 
-int		check_term(t_shell *shell, int argc, char **argv)
+int		put_int(int c)
+{
+	write(1, &c, 1);
+	return (c);
+}
+
+int		check_term(int argc, char **argv)
 {
 	char	*type;
-	char	buffer[2048];
+	char	buffer[MAXBUF];
 
 	(void)argc;
 	(void)argv;
 	if (!isatty(STDIN_FILENO))
 		return (1);
-	type = get_env("TERM", shell);
+	type = get_env("TERM", &g_shell);
 	if (type == NULL || tgetent(buffer, type) != 1)
 	{
 		ft_putendl_fd("Can not find TERM or termcap base", STDERR_FILENO);
 		return (1);
 	}
-	ft_bzero(&shell->term, sizeof(struct termios));
-	tcgetattr(STDIN_FILENO, &shell->term);
-	shell->term.c_lflag &= ~(ICANON | ECHO);
-	shell->term.c_cc[VMIN] = 1;
-	shell->term.c_cc[VTIME] = 0;
-	tcsetattr(STDIN_FILENO, TCSANOW, &shell->term);
 	return (0);
 }
 
@@ -1070,49 +1074,107 @@ int		readkey(void)
 		{
 			if (buf[1] == 'A')
 				return (24);
-			if (buf[1] == 'B')
+			else if (buf[1] == 'B')
 				return (25);
+			else if (buf[1] == 'C')
+				ft_putstr_fd("\e[C", 1);
+			else if (buf[1] == 'D')
+				ft_putstr_fd("\e[D", 1);
 		}
 	}
 	return (c);
 }
 
-void	handle_backspace(t_shell *shell)
+void	handle_backspace(void)
 {
 	int		len;
+	char	*copy;
 
-	len = ft_strlen(shell->buf);
-	if (len && shell->buf[len - 1])
-		ft_putstr_fd("\b \b", 1);
-	shell->buf[len - 1] = '\0';
+	len = ft_strlen(g_shell.buf);
+	if (g_shell.buf[0] != '\0')
+	{
+		tputs(cursor_left, 1, put_int);
+		tputs(delete_character, 1, put_int);
+		g_shell.buf[len - 1] = '\0';
+	}
 }
 
 void	handle_ctrld(char *c)
 {
-	if (shell.buf[0] == '\0')
+	if (g_shell.buf[0] == '\0')
 	{
-		ft_strlcpy(shell.buf, "exit", 6);
-		*c = '\n';
+		ft_strlcpy(g_shell.buf, "exit", 5);
+		*c = 10;
 	}
 }
 
-void	handle_ctrlc(t_shell *shell)
+void	handle_ctrlc(void)
 {
-	ft_putstr_fd("\n\r", STDERR_FILENO);
+	ft_putstr_fd("\n", STDERR_FILENO);
 	print_promt();
-	ft_bzero(shell->buf, 2048);
+	ft_bzero(g_shell.buf, MAXBUF);
 }
 
-char	*readline(t_shell *shell)
+void	clear_console(void)
+{
+	int	len;
+
+	len = ft_strlen(g_shell.buf);
+	while (len-- > 0)
+		ft_putstr_fd("\b \b", 1);
+	ft_bzero(g_shell.buf, MAXBUF);
+}
+
+void	handle_key_up(void)
+{
+	if (g_shell.index == 0)
+		return ;
+	clear_console();
+	ft_strlcpy(g_shell.buf, g_shell.history[--g_shell.index], MAXBUF);
+	ft_putstr_fd(g_shell.buf, STDOUT_FILENO);
+}
+
+void	handle_key_down(void)
+{
+	int	size;
+
+	size = size_arr(g_shell.history);
+	if (g_shell.index == size)
+	{
+		clear_console();
+		return ;
+	}
+	if (g_shell.buf[0] != '\0')
+	{
+		clear_console();
+		ft_strlcpy(g_shell.buf, g_shell.history[g_shell.index++], MAXBUF);
+		ft_putstr_fd(g_shell.buf, STDOUT_FILENO);
+	}
+}
+
+void	handle_keys(int key, char *c)
+{
+	if (key == 24)
+		handle_key_up();
+	else if (key == 25)
+		handle_key_down();
+	else if (key == 3)
+		handle_ctrlc();
+	else if (key == 4)
+		handle_ctrld(c);
+	else if (key == 127)
+		handle_backspace();
+}
+
+char	*readline()
 {
 	char	*line;
 	char	c;
 	int		key;
-	char	*leak;
 
 	line = NULL;
 	print_promt();
-	ft_bzero(shell->buf, 2048);
+	ft_bzero(g_shell.buf, MAXBUF);
 	while (1)
 	{
 		key = readkey();
@@ -1121,23 +1183,14 @@ char	*readline(t_shell *shell)
 		{
 			write(STDOUT_FILENO, &c, 1);
 			if (c != '\n')
-				ft_strlcat(shell->buf, &c, 2048);
+				ft_strlcat(g_shell.buf, &c, MAXBUF);
 		}
-		// if (key == 24)
-		// 	handle_key_up(shell);
-		// if (key == 25)
-		// 	handle_key_down(shell);
-		if (key == 3)
-			handle_ctrlc(shell);
-		if (key == 4)
-			handle_ctrld(&c);
-		if (key == 127)
-			handle_backspace(shell);
+		handle_keys(key, &c);
 		if (c == 10)
 			break ;
 	}
-	line = ft_calloc(ft_strlen(shell->buf), 2);
-	ft_strlcpy(line, shell->buf, 2048);
+	line = ft_calloc(ft_strlen(g_shell.buf), 2);
+	ft_strlcpy(line, g_shell.buf, MAXBUF);
 	return (line);
 }
 
@@ -1147,36 +1200,104 @@ void	handle_sig(int sig)
 	{
 		ft_putstr_fd("\n", 1);
 		print_promt();
-		ft_bzero(shell.buf, 2048);
+		ft_bzero(g_shell.buf, MAXBUF);
 	}
 	if (SIGQUIT == sig)
 	{
 		ft_putstr_fd("^\\Quit: ", STDERR_FILENO);
 		ft_putnbr_fd(sig, STDERR_FILENO);
-		// exit (g_status);
+		// exit (g_shell.status);
 	}
+}
+
+void	turn_off(t_shell *shell)
+{
+	ft_bzero(&shell->term, sizeof(struct termios));
+	tcgetattr(STDIN_FILENO, &shell->term);
+	shell->term.c_lflag &= ~(ICANON | ECHO);
+	shell->term.c_cc[VMIN] = 1;
+	shell->term.c_cc[VTIME] = 0;
+	tcsetattr(STDIN_FILENO, TCSANOW, &shell->term);
+}
+
+void	turn_on(t_shell *shell)
+{
+	tcgetattr(STDIN_FILENO, &shell->term);
+	shell->term.c_lflag |= (ICANON | ECHO);
+	tcsetattr(STDIN_FILENO, TCSANOW, &shell->term);
+}
+
+char	**history_add(char **old, char *new_line)
+{
+	char	**new;
+	int		count;
+	int		i;
+
+	g_shell.index = 0;
+	i = -1;
+	count = 0;
+	while (old[count] != NULL)
+		count++;
+	new = (char **)ft_calloc(count + 2, sizeof(char *));
+	if (count == 0)
+	{
+		new[++i] = ft_strdup(new_line);
+		g_shell.index++;
+	}
+	else
+	{
+		while (++i < count)
+		{
+			new[i] = ft_strdup(old[i]);
+			g_shell.index++;
+		}
+		if (ft_strncmp(new[i - 1], new_line, ft_strlen(new_line) + 1) != 0)
+		{
+			new[i] = ft_strdup(new_line);
+			g_shell.index++;
+		}
+	}
+	free_split(old);
+	return (new);
+}
+
+void	add_to_history(char *line, t_shell *shell)
+{
+	if (line[0] == '\0')
+		return ;
+	if (!shell->history)
+		shell->history = (char **)ft_calloc(1, sizeof(char *));
+	shell->history = history_add(shell->history, line);
 }
 
 int		main(int argc, char **argv, char **env)
 {
-	char	buffer[2048];
 	char	*line;
+	int		i;
 
-	g_status = 0;
-	shell.env = NULL;
-	init_envp(env, &shell.env);
-	g_status = check_term(&shell, argc, argv);
+	g_shell.status = 0;
+	g_shell.env = NULL;
+	g_shell.history = NULL;
+	g_shell.index = 0;
+	init_envp(env, &g_shell.env);
+	g_shell.status = check_term(argc, argv);
 	while (1)
 	{
+		i = -1;
+		turn_off(&g_shell);
 		signal(SIGINT, handle_sig);
 		signal(SIGQUIT, handle_sig);
-		line = readline(&shell);
+		line = readline();
+		add_to_history(line, &g_shell);
+		turn_on(&g_shell);
 		// printf("|%s|\n", line);
 		if (analysis(line) == 0)
-			processing(line, &shell);
+			processing(line, &g_shell);
 		else
 			printf("|%s|\n", line);
 		free(line);
+		// while (g_shell.history[++i] != NULL)
+		// 	printf("%s - %d\n", g_shell.history[i], i);
 		// free(shell.line);
 	}
 	return (EXIT_SUCCESS);

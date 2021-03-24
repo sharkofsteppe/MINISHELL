@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exit.c                                             :+:      :+:    :+:   */
+/*   e_exit.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 14:48:52 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/18 16:50:54 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/24 15:33:57 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,6 @@ int		builtin_exit(t_shell *shell, int flag)
 {
 	if (flag)
 		ft_putendl_fd("exit", 1);
-	exit_shell(shell, g_status);
+	exit_shell(shell, g_shell.status);
 	return (1);
 }
