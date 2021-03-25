@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/24 15:15:48 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/24 20:03:44 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/25 21:52:36 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -825,9 +825,10 @@ void	goparty(t_list **head, t_pt *p, t_shell *shell)
 		sortout(tmp, p, shell);
 		if (tmp->cmd)
 		{
-			// if (tmp->flag == 1)
-			// 	run_pipeline();
-			run_cmd(tmp, shell);
+			if (tmp->flag == 1)
+				run_pipeline(tmp, shell);
+			else
+				run_cmd(tmp, shell);
 		}
 		tmp = tmp->next;
 	}
@@ -1166,7 +1167,7 @@ void	handle_keys(int key, char *c)
 		handle_backspace();
 }
 
-char	*readline()
+char	*readline(t_shell *shell)
 {
 	char	*line;
 	char	c;
@@ -1174,7 +1175,7 @@ char	*readline()
 
 	line = NULL;
 	print_promt();
-	ft_bzero(g_shell.buf, MAXBUF);
+	ft_bzero(shell->buf, MAXBUF);
 	while (1)
 	{
 		key = readkey();
@@ -1274,31 +1275,28 @@ int		main(int argc, char **argv, char **env)
 {
 	char	*line;
 	int		i;
+	t_shell	shell;
 
-	g_shell.status = 0;
-	g_shell.env = NULL;
-	g_shell.history = NULL;
-	g_shell.index = 0;
-	init_envp(env, &g_shell.env);
-	g_shell.status = check_term(argc, argv);
+	shell.status = 0;
+	shell.env = NULL;
+	shell.history = NULL;
+	shell.index = 0;
+	init_envp(env, &shell.env);
+	shell.status = check_term(argc, argv);
 	while (1)
 	{
 		i = -1;
-		turn_off(&g_shell);
+		turn_off(&shell);
 		signal(SIGINT, handle_sig);
 		signal(SIGQUIT, handle_sig);
-		line = readline();
-		add_to_history(line, &g_shell);
-		turn_on(&g_shell);
-		// printf("|%s|\n", line);
+		line = readline(&shell);
+		add_to_history(line, &shell);
+		turn_on(&shell);
 		if (analysis(line) == 0)
-			processing(line, &g_shell);
+			processing(line, &shell);
 		else
 			printf("|%s|\n", line);
 		free(line);
-		// while (g_shell.history[++i] != NULL)
-		// 	printf("%s - %d\n", g_shell.history[i], i);
-		// free(shell.line);
 	}
 	return (EXIT_SUCCESS);
 }

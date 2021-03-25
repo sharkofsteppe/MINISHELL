@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_lstnew.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/06 20:59:19 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/17 17:01:48 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/25 20:38:21 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,18 @@ t_list	*ft_lstnew(void *content)
 
 	if (!(new = (t_list*)malloc(sizeof(*new))))
 		return (NULL);
-	new->flag = 0;
-	new->cmd = 0;
-	new->arg = 0;
-	new->rdr = 0;
 	new->content = content;
+	new->flag = 0;
+	new->cmd = NULL;
+	new->arg = NULL;
+	new->rdr = NULL;
+	new->fdpipe[0] = -1;
+	new->fdpipe[1] = -1;
+	new->fdin = 0;
+	new->fdout = 1;
+	new->rdr_l = NULL;
+	new->outfile = NULL;
+	new->infile = NULL;
 	new->next = NULL;
 	return (new);
 }
@@ -35,9 +42,16 @@ t_list	*ft_lstnew_pipe(void *content)
 		return (NULL);
 	new->content = content;
 	new->flag = 1;
-	new->arg = 0;
-	new->rdr = 0;
-	new->cmd = 0;
+	new->arg = NULL;
+	new->rdr = NULL;
+	new->cmd = NULL;
+	new->fdpipe[0] = -1;
+	new->fdpipe[1] = -1;
+	new->fdin = -1;
+	new->fdout = -1;
+	new->rdr_l = NULL;
+	new->infile = NULL;
+	new->outfile = NULL;
 	new->next = NULL;
 	return (new);
 }

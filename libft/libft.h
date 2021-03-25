@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 14:33:16 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/20 18:58:56 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/25 19:19:09 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,15 +28,29 @@
 # define BUFFER_SIZE 32
 # define SEMICOLON ';'
 
-
+typedef struct		s_rdr
+{
+	char	*filename;
+	int		type;
+	int		flag;
+	struct s_rdr	*next;
+	
+}					t_rdr;
 typedef struct		s_list
 {
 	void			*content;
-	struct s_list	*next;
 	char			*cmd;
 	char			**arg;
 	char			**rdr;
 	int				flag;
+	
+	char			*infile;
+	char			*outfile;
+	int				fdin;
+	int				fdout;
+	int				fdpipe[2];
+	t_rdr			*rdr_l;
+	struct s_list	*next;
 }					t_list;
 
 
