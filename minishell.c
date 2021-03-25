@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/24 15:15:48 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/25 21:52:36 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/26 01:24:14 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void	squots(char **fmt, char c, int *flag)
 		else if (**fmt == '\0')
 		{
 			ft_putendl_fd("syntax error: unclosed quotes", 1);
-			g_shell.status = 1600;
+			g_signal = 1600;
 			*flag = 1;
 			break ;
 		}
@@ -74,7 +74,7 @@ void	squotsl(char **fmt, char c, int *flag)
 		if (**fmt == '\0')
 		{
 			ft_putendl_fd("syntax error: unclosed quotes", 1);
-			g_shell.status = 1601;
+			g_signal = 1601;
 			*flag = 1;
 			break ;
 		}
@@ -168,7 +168,7 @@ int		checkcolons(char *fmt)
 		|| doublesym(fmt, '|', '|'))
 	{
 		ft_putendl_fd("syntax error near unexpected token", 1);
-		g_shell.status = 258;
+		g_signal = 258;
 		return (1);
 	}
 	return (0);
@@ -201,7 +201,7 @@ int		checkrdr(char *fmt)
 	if (ret == 1)
 	{
 		ft_putendl_fd("syntax error near unexpected token", 1);
-		g_shell.status = 258;
+		g_signal = 258;
 	}
 	return (ret);
 }
@@ -245,7 +245,7 @@ int		rdractedeux(char *fmt)
 	if (ret == 1)
 	{
 		ft_putendl_fd("syntax error near unexpected token", 1);
-		g_shell.status = 258;
+		g_signal = 258;
 	}
 	return (ret);
 }
@@ -818,25 +818,46 @@ void	sortout(t_list *tmp, t_pt *p, t_shell *shell)
 void	goparty(t_list **head, t_pt *p, t_shell *shell)
 {
 	t_list *tmp;
+	t_list *tmp1;
 
 	tmp = *head;
 	while (tmp)
 	{
 		sortout(tmp, p, shell);
-		if (tmp->cmd)
-		{
-			if (tmp->flag == 1)
-				run_pipeline(tmp, shell);
-			else
-				run_cmd(tmp, shell);
-		}
+		// if (tmp->cmd)
+		// {
+		// 	if (tmp->flag == 1)
+		// 	{
+		// 		run_pipeline(&tmp, shell);
+		// 		break ;
+		// 	}
+		// 	else
+		// 		run_cmd(&tmp, shell);
+		// }
 		tmp = tmp->next;
+	}
+	tmp1 = *head;
+	while (tmp1)
+	{
+		// sortout(tmp1, p, shell);
+		if (tmp1->cmd)
+		{
+			if (tmp1->flag == 1)
+			{
+				run_pipeline(&tmp1, shell);
+				break ;
+			}
+			else
+				run_cmd(&tmp1, shell);
+		}
+		tmp1 = tmp1->next;
 	}
 	// tmp = *head;
 	// int j;
 	// while (tmp)
 	// {
 	// 	printf("COMMAND |%s|\n", tmp->cmd);
+	// 	printf("FLAG |%d|\n", tmp->flag);
 	// 	j = 0;
 	// 	while (j < size_arr(tmp->arg))
 	// 	{
@@ -1040,7 +1061,7 @@ int		put_int(int c)
 	return (c);
 }
 
-int		check_term(int argc, char **argv)
+int		check_term(int argc, char **argv, t_shell *shell)
 {
 	char	*type;
 	char	buffer[MAXBUF];
@@ -1049,7 +1070,7 @@ int		check_term(int argc, char **argv)
 	(void)argv;
 	if (!isatty(STDIN_FILENO))
 		return (1);
-	type = get_env("TERM", &g_shell);
+	type = get_env("TERM", shell);
 	if (type == NULL || tgetent(buffer, type) != 1)
 	{
 		ft_putendl_fd("Can not find TERM or termcap base", STDERR_FILENO);
@@ -1086,85 +1107,84 @@ int		readkey(void)
 	return (c);
 }
 
-void	handle_backspace(void)
+void	handle_backspace(t_shell *shell)
 {
 	int		len;
-	char	*copy;
 
-	len = ft_strlen(g_shell.buf);
-	if (g_shell.buf[0] != '\0')
+	len = ft_strlen(shell->buf);
+	if (shell->buf[0] != '\0')
 	{
 		tputs(cursor_left, 1, put_int);
 		tputs(delete_character, 1, put_int);
-		g_shell.buf[len - 1] = '\0';
+		shell->buf[len - 1] = '\0';
 	}
 }
 
-void	handle_ctrld(char *c)
+void	handle_ctrld(char *c, t_shell *shell)
 {
-	if (g_shell.buf[0] == '\0')
+	if (shell->buf[0] == '\0')
 	{
-		ft_strlcpy(g_shell.buf, "exit", 5);
+		ft_strlcpy(shell->buf, "exit", 5);
 		*c = 10;
 	}
 }
 
-void	handle_ctrlc(void)
+void	handle_ctrlc(t_shell *shell)
 {
 	ft_putstr_fd("\n", STDERR_FILENO);
 	print_promt();
-	ft_bzero(g_shell.buf, MAXBUF);
+	ft_bzero(shell->buf, MAXBUF);
 }
 
-void	clear_console(void)
+void	clear_console(t_shell *shell)
 {
 	int	len;
 
-	len = ft_strlen(g_shell.buf);
+	len = ft_strlen(shell->buf);
 	while (len-- > 0)
 		ft_putstr_fd("\b \b", 1);
-	ft_bzero(g_shell.buf, MAXBUF);
+	ft_bzero(shell->buf, MAXBUF);
 }
 
-void	handle_key_up(void)
+void	handle_key_up(t_shell *shell)
 {
-	if (g_shell.index == 0)
+	if (shell->index == 0)
 		return ;
-	clear_console();
-	ft_strlcpy(g_shell.buf, g_shell.history[--g_shell.index], MAXBUF);
-	ft_putstr_fd(g_shell.buf, STDOUT_FILENO);
+	clear_console(shell);
+	ft_strlcpy(shell->buf, shell->history[--shell->index], MAXBUF);
+	ft_putstr_fd(shell->buf, STDOUT_FILENO);
 }
 
-void	handle_key_down(void)
+void	handle_key_down(t_shell *shell)
 {
 	int	size;
 
-	size = size_arr(g_shell.history);
-	if (g_shell.index == size)
+	size = size_arr(shell->history);
+	if (shell->index == size)
 	{
-		clear_console();
+		clear_console(shell);
 		return ;
 	}
-	if (g_shell.buf[0] != '\0')
+	if (shell->buf[0] != '\0')
 	{
-		clear_console();
-		ft_strlcpy(g_shell.buf, g_shell.history[g_shell.index++], MAXBUF);
-		ft_putstr_fd(g_shell.buf, STDOUT_FILENO);
+		clear_console(shell);
+		ft_strlcpy(shell->buf, shell->history[shell->index++], MAXBUF);
+		ft_putstr_fd(shell->buf, STDOUT_FILENO);
 	}
 }
 
-void	handle_keys(int key, char *c)
+void	handle_keys(int key, char *c, t_shell *shell)
 {
 	if (key == 24)
-		handle_key_up();
+		handle_key_up(shell);
 	else if (key == 25)
-		handle_key_down();
+		handle_key_down(shell);
 	else if (key == 3)
-		handle_ctrlc();
+		handle_ctrlc(shell);
 	else if (key == 4)
-		handle_ctrld(c);
+		handle_ctrld(c, shell);
 	else if (key == 127)
-		handle_backspace();
+		handle_backspace(shell);
 }
 
 char	*readline(t_shell *shell)
@@ -1184,31 +1204,15 @@ char	*readline(t_shell *shell)
 		{
 			write(STDOUT_FILENO, &c, 1);
 			if (c != '\n')
-				ft_strlcat(g_shell.buf, &c, MAXBUF);
+				ft_strlcat(shell->buf, &c, MAXBUF);
 		}
-		handle_keys(key, &c);
+		handle_keys(key, &c, shell);
 		if (c == 10)
 			break ;
 	}
-	line = ft_calloc(ft_strlen(g_shell.buf), 2);
-	ft_strlcpy(line, g_shell.buf, MAXBUF);
+	line = ft_calloc(ft_strlen(shell->buf), 2);
+	ft_strlcpy(line, shell->buf, MAXBUF);
 	return (line);
-}
-
-void	handle_sig(int sig)
-{
-	if (SIGINT == sig)
-	{
-		ft_putstr_fd("\n", 1);
-		print_promt();
-		ft_bzero(g_shell.buf, MAXBUF);
-	}
-	if (SIGQUIT == sig)
-	{
-		ft_putstr_fd("^\\Quit: ", STDERR_FILENO);
-		ft_putnbr_fd(sig, STDERR_FILENO);
-		// exit (g_shell.status);
-	}
 }
 
 void	turn_off(t_shell *shell)
@@ -1228,13 +1232,13 @@ void	turn_on(t_shell *shell)
 	tcsetattr(STDIN_FILENO, TCSANOW, &shell->term);
 }
 
-char	**history_add(char **old, char *new_line)
+char	**history_add(char **old, char *new_line, t_shell *shell)
 {
 	char	**new;
 	int		count;
 	int		i;
 
-	g_shell.index = 0;
+	shell->index = 0;
 	i = -1;
 	count = 0;
 	while (old[count] != NULL)
@@ -1243,19 +1247,19 @@ char	**history_add(char **old, char *new_line)
 	if (count == 0)
 	{
 		new[++i] = ft_strdup(new_line);
-		g_shell.index++;
+		shell->index++;
 	}
 	else
 	{
 		while (++i < count)
 		{
 			new[i] = ft_strdup(old[i]);
-			g_shell.index++;
+			shell->index++;
 		}
 		if (ft_strncmp(new[i - 1], new_line, ft_strlen(new_line) + 1) != 0)
 		{
 			new[i] = ft_strdup(new_line);
-			g_shell.index++;
+			shell->index++;
 		}
 	}
 	free_split(old);
@@ -1268,7 +1272,7 @@ void	add_to_history(char *line, t_shell *shell)
 		return ;
 	if (!shell->history)
 		shell->history = (char **)ft_calloc(1, sizeof(char *));
-	shell->history = history_add(shell->history, line);
+	shell->history = history_add(shell->history, line, shell);
 }
 
 int		main(int argc, char **argv, char **env)
@@ -1282,13 +1286,11 @@ int		main(int argc, char **argv, char **env)
 	shell.history = NULL;
 	shell.index = 0;
 	init_envp(env, &shell.env);
-	shell.status = check_term(argc, argv);
+	shell.status = check_term(argc, argv, &shell);
 	while (1)
 	{
 		i = -1;
 		turn_off(&shell);
-		signal(SIGINT, handle_sig);
-		signal(SIGQUIT, handle_sig);
 		line = readline(&shell);
 		add_to_history(line, &shell);
 		turn_on(&shell);

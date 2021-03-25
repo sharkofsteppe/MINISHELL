@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/15 19:07:29 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/20 17:10:57 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/26 01:30:20 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,9 @@ int	builtin_echo(char **argv, int size, t_shell *shell)
 				ft_putstr_fd(get_env("HOME", shell), 1);
 			else
 				ft_putstr_fd(argv[i], 1);
-			if (argv[i++])
+			if (argv[i + 1])
 				ft_putchar_fd(' ', 1);
+			i++;
 		}
 		if (!flag)
 			ft_putchar_fd('\n', 1);

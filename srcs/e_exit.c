@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 14:48:52 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/24 15:33:57 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/25 22:09:37 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,6 @@ int		builtin_exit(t_shell *shell, int flag)
 {
 	if (flag)
 		ft_putendl_fd("exit", 1);
-	exit_shell(shell, g_shell.status);
+	exit_shell(shell, g_signal);
 	return (1);
 }

@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 14:44:48 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/24 15:33:15 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/25 22:08:57 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 int		set_status(int err)
 {
-	g_shell.status = err;
+	g_signal = err;
 	return (err);
 }
 

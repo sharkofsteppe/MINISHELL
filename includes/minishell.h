@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 14:16:02 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/24 19:45:45 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/26 00:59:18 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,9 +79,9 @@ typedef struct	s_sort
 	char	*tmpcontent;
 }				t_sort;
 
-t_shell			g_shell;
+int				g_signal;
 
-char			**list_to_mass(t_envp **head);
+char			**list_to_mass(t_envp *head);
 int				get_argv_size(char **argv);
 int				builtin_exit(t_shell *shell, int flag);
 char			**copy_env(char **envp);
@@ -93,10 +93,7 @@ char			*get_env(char *name, t_shell *shell);
 void			free_split(char **split);
 void			print_promt(void);
 void			print_error(char *error, char *ext, char *cmd, int flag);
-int				run_cmd(t_list *tmp, t_shell *shell);
 int				set_env(char *name, char *new, t_shell *shell);
-void			handle_main(int sig);
-void			handle_child(int sig);
 int				builtin_cd(char **argv, int size, t_shell *shell);
 int				builtin_pwd(void);
 int				builtin_env(t_shell *shell);
@@ -108,7 +105,10 @@ void			sort_envp(t_envp **envp);
 int				envpsize_2(t_envp *envp);
 void			envp_clear(t_envp **env, void (*del)(void*));
 int				set_status(int err);
-int				run_pipe(t_list **tmp, t_shell *shell);
-void			reddirection(char **rdr, t_shell *shell);
 int				put_int(int c);
+
+
+void		run_pipeline(t_list **head, t_shell *shell);
+
+void		run_cmd(t_list **head, t_shell *shell);
 #endif

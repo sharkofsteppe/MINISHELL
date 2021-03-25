@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 14:46:22 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/20 16:26:32 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/25 23:14:48 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ int		envpsize(t_envp *envp)
 	return (count);
 }
 
-char	**list_to_mass(t_envp **head)
+char	**list_to_mass(t_envp *head)
 {
 	t_envp	*env;
 	char	**mass;
@@ -80,7 +80,7 @@ char	**list_to_mass(t_envp **head)
 	int		i;
 
 	i = 0;
-	env = *head;
+	env = head;
 	if (!(mass = (char **)malloc(sizeof(char *) * (envpsize(env) + 1))))
 		return (NULL);
 	while (env)
