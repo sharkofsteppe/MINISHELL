@@ -6,12 +6,11 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/15 19:07:29 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/26 01:30:20 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/26 15:23:00 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "libft.h"
 
 int	builtin_echo(char **argv, int size, t_shell *shell)
 {

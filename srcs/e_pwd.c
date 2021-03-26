@@ -6,19 +6,17 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 14:45:23 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/20 16:26:49 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/26 18:03:50 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "libft.h"
 
 int	builtin_pwd()
 {
-	char	dir[FILENAME_MAX];
-	char	*cwd;
+	char	dir[MAXBUF];
 
-	cwd = getcwd(dir, FILENAME_MAX - 1);
-	ft_putendl_fd(cwd, 1);
+	getcwd(dir, sizeof(dir));
+	ft_putendl_fd(dir, 1);
 	return (0);
 }

@@ -6,12 +6,11 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 14:46:22 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/25 23:14:48 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/26 15:23:05 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "libft.h"
 
 void	envp_clear(t_envp **env, void (*del)(void*))
 {

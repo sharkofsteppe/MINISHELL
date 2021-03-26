@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 14:16:02 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/26 15:07:30 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/26 19:41:04 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 # include <term.h>
 # include <stdio.h>
 # include <dirent.h>
+# include <sys/stat.h>
 # include "libft.h"
 # define RED "\x1b[31m"
 # define GRE "\x1b[32m"
@@ -110,4 +111,6 @@ int				put_int(int c);
 void			run_pipeline(t_list **head, t_shell *shell);
 
 int			run_cmd(t_list **head, t_shell *shell);
+
+void	prep_rdr(t_list *tmp);
 #endif

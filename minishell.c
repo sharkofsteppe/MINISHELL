@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/24 15:15:48 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/26 14:49:56 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/26 19:35:48 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -841,27 +841,26 @@ void	goparty(t_list **head, t_pt *p, t_shell *shell)
 		}
 		tmp1 = tmp1->next;
 	}
-	// tmp = *head;
+	// tmp1 = *head;
 	// int j;
-	// while (tmp)
+	// while (tmp1)
 	// {
-	// 	printf("COMMAND |%s|\n", tmp->cmd);
-	// 	printf("FLAG |%d|\n", tmp->flag);
+	// 	printf("COMMAND |%s|\n", tmp1->cmd);
 	// 	j = 0;
-	// 	while (j < size_arr(tmp->arg))
+	// 	while (j < size_arr(tmp1->arg))
 	// 	{
-	// 		printf("TRUE ARG :|%s|\n",tmp->arg[j]);
+	// 		printf("TRUE ARG :|%s|\n",tmp1->arg[j]);
 	// 		j++;
 	// 	}
 
 	// 	j = 0;
-	// 	while (j < size_arr(tmp->rdr))
+	// 	while (j < size_arr(tmp1->rdr))
 	// 	{
-	// 		printf("\nREDIRECT ARG:|%s|\n",tmp->rdr[j]);
+	// 		printf("\nREDIRECT ARG:|%s|\n",tmp1->rdr[j]);
 	// 		j++;
 	// 	}
 	// 	printf("\n");
-	// 	tmp = tmp->next;
+	// 	tmp1 = tmp1->next;
 	// }
 	ft_lstclear(head,free);
 
@@ -1106,6 +1105,7 @@ void	handle_backspace(t_shell *shell)
 		tputs(cursor_left, 1, put_int);
 		tputs(delete_character, 1, put_int);
 		shell->buf[len - 1] = '\0';
+		// shell->b_ind--;
 	}
 }
 
@@ -1279,13 +1279,12 @@ int		main(int argc, char **argv, char **env)
 	{
 		turn_off(&shell);
 		line = readline(&shell);
-		printf("|%s|\n", line);
 		add_to_history(line, &shell);
 		turn_on(&shell);
 		if (analysis(line) == 0)
 			processing(line, &shell);
 		else
-			printf("|%s|\n", line);
+			print_error("Some error", 0, 0, 0);
 		free(line);
 	}
 	return (EXIT_SUCCESS);

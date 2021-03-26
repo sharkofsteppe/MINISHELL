@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 16:51:43 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/26 15:13:56 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/26 19:41:14 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,88 +105,39 @@ char	**add_cmd_to_arg(char **arg, char *cmd)
 	return (new);
 }
 
-void	rdr_add_back(t_rdr **rdr, t_rdr *new)
+int			run_last_pipe(t_list *cmd, t_shell *shell, int input)
 {
-	t_rdr	*tmp;
+	char		*command;
+	char		**env;
 
-	if (rdr && *rdr && new)
+	if (input != STDIN_FILENO)
+		dup2(input, STDIN_FILENO);
+	if (check_builtin(cmd->cmd) == 1)
 	{
-		tmp = *rdr;
-		if (tmp == NULL)
-			*rdr = new;
-		else
-		{
-			while (tmp->next)
-				tmp = tmp->next;
-			tmp->next = new;
-		}
+		cmd->arg = add_cmd_to_arg(cmd->arg, cmd->cmd);
+		return (run_builtin(cmd->cmd, cmd->arg, shell));
 	}
 	else
-		*rdr = new;
-}
-
-t_rdr	*new_rdr(char *file, int type, int flag)
-{
-	t_rdr	*new;
-
-	if (!(new = (t_rdr *)malloc(sizeof(*new))))
-		return(NULL);
-	new->filename = file;
-	new->type = type;
-	new->flag = flag;
-	new->next = NULL;
-	return (new);
-}
-
-void	chose_rdr(t_list *tmp)
-{
-	t_rdr	*tp;
-
-	if (tmp->rdr_l)
 	{
-		tp = tmp->rdr_l;
-		while (tp != NULL)
+		command = search_bin(cmd->cmd, shell);
+		if (command)
 		{
-			if (tp->type == 1)
-				tmp->outfile = tp->filename;
-			else if (tp->type == 2)
-				tmp->outfile = tp->filename;
-			else if (tp->type == 3)
-				tmp->infile = tp->filename;
-			tp = tp->next;
+			cmd->arg = add_cmd_to_arg(cmd->arg, command);
+			free(command);
+		}
+		else
+			cmd->arg = add_cmd_to_arg(cmd->arg, cmd->cmd);
+		env = list_to_mass(shell->env);
+		if (execve(cmd->arg[0], cmd->arg, env) == -1)
+		{
+			print_error("minibash: ", ": command not found", cmd->cmd, 0);
+			printf("%d\n", errno);
+			exit (1);
 		}
 	}
 }
 
-void	prep_rdr(t_list *tmp)
-{
-	int		i;
-
-	i = 0;
-	if (tmp->rdr)
-	{
-		while (tmp->rdr[i] != NULL)
-		{
-			if (ft_strncmp(">>", tmp->rdr[i], 3) == 0)
-			{
-				rdr_add_back(&tmp->rdr_l, new_rdr(tmp->rdr[i + 1], 1, 0));
-				i += 2;
-			}
-			else if (ft_strncmp(">", tmp->rdr[i], 2) == 0)
-			{
-				rdr_add_back(&tmp->rdr_l, new_rdr(tmp->rdr[i + 1], 2, 0));
-				i += 2;
-			}
-			else if (ft_strncmp("<", tmp->rdr[i], 2) == 0)
-			{
-				rdr_add_back(&tmp->rdr_l, new_rdr(tmp->rdr[i + 1], 3, 0));
-				i += 2;
-			}
-		}
-	}
-}
-
-int			run_last_pipe(t_list *cmd, t_shell *shell, int input)
+int			exec_pipe(t_list *cmd, t_shell *shell)
 {
 	char		*command;
 	char		**env;
@@ -209,31 +160,7 @@ int			run_last_pipe(t_list *cmd, t_shell *shell, int input)
 		env = list_to_mass(shell->env);
 		if (execve(cmd->arg[0], cmd->arg, env) == -1)
 		{
-			print_error("minibash: ", 0, cmd->cmd, 1);
-			exit (1);
-		}
-	}
-}
-
-int			exec_pipe(t_list *cmd, t_shell *shell)
-{
-	char		*command;
-	char		**env;
-
-	if (check_builtin(cmd->cmd) == 1)
-	{
-		cmd->arg = add_cmd_to_arg(cmd->arg, cmd->cmd);
-		return (run_builtin(cmd->cmd, cmd->arg, shell));
-	}
-	else
-	{
-		command = search_bin(cmd->cmd, shell);
-		cmd->arg = add_cmd_to_arg(cmd->arg, command);
-		free(command);
-		env = list_to_mass(shell->env);
-		if (execve(cmd->arg[0], cmd->arg, env) == -1)
-		{
-			print_error("minibash: ", 0, cmd->cmd, 1);
+			print_error("minibash: ", " :command not found", cmd->cmd, 0);
 			exit (1);
 		}
 	}
@@ -288,8 +215,6 @@ void		run_pipeline(t_list **head, t_shell *shell)
 			input = fds[0];
 			tmp = tmp->next;
 		}
-		if (input != STDIN_FILENO)
-			dup2(input, STDIN_FILENO);
 		run_last_pipe(tmp, shell, input);
 		exit (EXIT_FAILURE);
 	}
@@ -320,7 +245,7 @@ int		run_solo_cmd(t_list *cmd, t_shell *shell)
 			cmd->arg = add_cmd_to_arg(cmd->arg, cmd->cmd);
 		env = list_to_mass(shell->env);
 		execve(cmd->arg[0], cmd->arg, env);
-		print_error("minibash: ", 0, cmd->cmd, 1);
+		print_error("minibash: ", ": command not found", cmd->cmd, 0);
 		exit (1);
 	}
 }
@@ -332,6 +257,7 @@ int		run_cmd(t_list **head, t_shell *shell)
 	int		check;
 
 	tmp = *head;
+	prep_rdr(tmp);
 	check = check_builtin(tmp->cmd);
 	if (check == 1)
 	{

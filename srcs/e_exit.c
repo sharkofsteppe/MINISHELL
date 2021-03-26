@@ -6,12 +6,11 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 14:48:52 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/26 14:45:57 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/26 15:23:13 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "libft.h"
 
 void	exit_shell(t_shell *shell, int err)
 {

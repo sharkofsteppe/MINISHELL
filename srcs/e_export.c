@@ -6,12 +6,11 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 14:45:41 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/20 16:30:35 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/26 15:23:16 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "libft.h"
 
 t_envp	*lst_copy(t_envp *envp)
 {

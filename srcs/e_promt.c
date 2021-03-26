@@ -6,12 +6,11 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 14:58:52 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/24 18:00:37 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/26 15:23:24 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "libft.h"
 
 void		print_promt(void)
 {
