@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/24 15:15:48 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/26 01:24:14 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/26 14:49:56 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -824,22 +824,11 @@ void	goparty(t_list **head, t_pt *p, t_shell *shell)
 	while (tmp)
 	{
 		sortout(tmp, p, shell);
-		// if (tmp->cmd)
-		// {
-		// 	if (tmp->flag == 1)
-		// 	{
-		// 		run_pipeline(&tmp, shell);
-		// 		break ;
-		// 	}
-		// 	else
-		// 		run_cmd(&tmp, shell);
-		// }
 		tmp = tmp->next;
 	}
 	tmp1 = *head;
 	while (tmp1)
 	{
-		// sortout(tmp1, p, shell);
 		if (tmp1->cmd)
 		{
 			if (tmp1->flag == 1)
@@ -1148,10 +1137,10 @@ void	clear_console(t_shell *shell)
 
 void	handle_key_up(t_shell *shell)
 {
-	if (shell->index == 0)
+	if (shell->h_ind == 0)
 		return ;
 	clear_console(shell);
-	ft_strlcpy(shell->buf, shell->history[--shell->index], MAXBUF);
+	ft_strlcpy(shell->buf, shell->history[--shell->h_ind], MAXBUF);
 	ft_putstr_fd(shell->buf, STDOUT_FILENO);
 }
 
@@ -1160,7 +1149,7 @@ void	handle_key_down(t_shell *shell)
 	int	size;
 
 	size = size_arr(shell->history);
-	if (shell->index == size)
+	if (shell->h_ind == size)
 	{
 		clear_console(shell);
 		return ;
@@ -1168,7 +1157,7 @@ void	handle_key_down(t_shell *shell)
 	if (shell->buf[0] != '\0')
 	{
 		clear_console(shell);
-		ft_strlcpy(shell->buf, shell->history[shell->index++], MAXBUF);
+		ft_strlcpy(shell->buf, shell->history[shell->h_ind++], MAXBUF);
 		ft_putstr_fd(shell->buf, STDOUT_FILENO);
 	}
 }
@@ -1238,7 +1227,7 @@ char	**history_add(char **old, char *new_line, t_shell *shell)
 	int		count;
 	int		i;
 
-	shell->index = 0;
+	shell->h_ind = 0;
 	i = -1;
 	count = 0;
 	while (old[count] != NULL)
@@ -1247,19 +1236,19 @@ char	**history_add(char **old, char *new_line, t_shell *shell)
 	if (count == 0)
 	{
 		new[++i] = ft_strdup(new_line);
-		shell->index++;
+		shell->h_ind++;
 	}
 	else
 	{
 		while (++i < count)
 		{
 			new[i] = ft_strdup(old[i]);
-			shell->index++;
+			shell->h_ind++;
 		}
 		if (ft_strncmp(new[i - 1], new_line, ft_strlen(new_line) + 1) != 0)
 		{
 			new[i] = ft_strdup(new_line);
-			shell->index++;
+			shell->h_ind++;
 		}
 	}
 	free_split(old);
@@ -1278,20 +1267,19 @@ void	add_to_history(char *line, t_shell *shell)
 int		main(int argc, char **argv, char **env)
 {
 	char	*line;
-	int		i;
 	t_shell	shell;
 
 	shell.status = 0;
 	shell.env = NULL;
 	shell.history = NULL;
-	shell.index = 0;
+	shell.h_ind = 0;
 	init_envp(env, &shell.env);
 	shell.status = check_term(argc, argv, &shell);
 	while (1)
 	{
-		i = -1;
 		turn_off(&shell);
 		line = readline(&shell);
+		printf("|%s|\n", line);
 		add_to_history(line, &shell);
 		turn_on(&shell);
 		if (analysis(line) == 0)

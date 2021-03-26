@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 14:16:02 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/26 00:59:18 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/26 15:07:30 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,11 +52,10 @@ typedef struct	s_cmd
 typedef struct	s_shell
 {
 	char			buf[MAXBUF];
-	int				ind;
+	int				b_ind;
 	char			**history;
-	int				index;
+	int				h_ind;
 	int				status;
-	pid_t			pid;
 	struct termios	term;
 	t_envp			*env;
 }				t_shell;
@@ -108,7 +107,7 @@ int				set_status(int err);
 int				put_int(int c);
 
 
-void		run_pipeline(t_list **head, t_shell *shell);
+void			run_pipeline(t_list **head, t_shell *shell);
 
-void		run_cmd(t_list **head, t_shell *shell);
+int			run_cmd(t_list **head, t_shell *shell);
 #endif

@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 16:51:43 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/26 01:26:11 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/26 15:13:56 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,7 +190,7 @@ int			run_last_pipe(t_list *cmd, t_shell *shell, int input)
 {
 	char		*command;
 	char		**env;
-	
+
 	if (check_builtin(cmd->cmd) == 1)
 	{
 		cmd->arg = add_cmd_to_arg(cmd->arg, cmd->cmd);
@@ -199,16 +199,19 @@ int			run_last_pipe(t_list *cmd, t_shell *shell, int input)
 	else
 	{
 		command = search_bin(cmd->cmd, shell);
-		if (input != STDIN_FILENO)
-			dup2(input, STDIN_FILENO);
-		cmd->arg = add_cmd_to_arg(cmd->arg, command);
+		if (command)
+		{
+			cmd->arg = add_cmd_to_arg(cmd->arg, command);
+			free(command);
+		}
+		else
+			cmd->arg = add_cmd_to_arg(cmd->arg, cmd->cmd);
 		env = list_to_mass(shell->env);
-		printf("tmp cmd: %s size %d\n", command, cmd->flag);
-		execve(command, cmd->arg, env);
-		perror("execve");
-		exit (1);
-			// free_split(env);
-			// free(command);
+		if (execve(cmd->arg[0], cmd->arg, env) == -1)
+		{
+			print_error("minibash: ", 0, cmd->cmd, 1);
+			exit (1);
+		}
 	}
 }
 
@@ -216,7 +219,7 @@ int			exec_pipe(t_list *cmd, t_shell *shell)
 {
 	char		*command;
 	char		**env;
-	
+
 	if (check_builtin(cmd->cmd) == 1)
 	{
 		cmd->arg = add_cmd_to_arg(cmd->arg, cmd->cmd);
@@ -226,12 +229,13 @@ int			exec_pipe(t_list *cmd, t_shell *shell)
 	{
 		command = search_bin(cmd->cmd, shell);
 		cmd->arg = add_cmd_to_arg(cmd->arg, command);
+		free(command);
 		env = list_to_mass(shell->env);
-		execve(command, cmd->arg, env);
-		perror("execve");
-		exit (1);
-		// free_split(env);
-		// free(command);
+		if (execve(cmd->arg[0], cmd->arg, env) == -1)
+		{
+			print_error("minibash: ", 0, cmd->cmd, 1);
+			exit (1);
+		}
 	}
 }
 
@@ -258,13 +262,12 @@ int		run_pipe_cmd(t_list *cmd, t_shell *shell, int input, int out)
 		exec_pipe(cmd, shell);
 		exit(EXIT_FAILURE);
 	}
-	// waitpid(pidc, &status, 0);
+	waitpid(pidc, &status, 0);
 	return (pidc);
 }
 
 void		run_pipeline(t_list **head, t_shell *shell)
 {
-	int		size;
 	int		input;
 	pid_t	pid;
 	int		status;
@@ -272,18 +275,7 @@ void		run_pipeline(t_list **head, t_shell *shell)
 	t_list	*tmp;
 
 	tmp = *head;
-	size = ft_lstsize(tmp);
-	pid = fork();
-	// while (tmp)
-	// {
-	// 		pipe(fds);
-	// 		run_pipe_cmd(tmp, shell, input, fds[1]);
-	// 		close(fds[1]);
-	// 		input = fds[0];
-	// 		// printf("addr %p tmp cmd: %s flag %d\n", tmp, tmp->cmd, tmp->flag);
-	// 		tmp = tmp->next;
-	// }
-	if (pid < 0)
+	if ((pid = fork()) < 0)
 		exit(EXIT_FAILURE);
 	if (pid == 0)
 	{
@@ -294,16 +286,64 @@ void		run_pipeline(t_list **head, t_shell *shell)
 			run_pipe_cmd(tmp, shell, input, fds[1]);
 			close(fds[1]);
 			input = fds[0];
-			printf("addr %p tmp cmd: %s flag %d\n", tmp, tmp->cmd, tmp->flag);
 			tmp = tmp->next;
 		}
+		if (input != STDIN_FILENO)
+			dup2(input, STDIN_FILENO);
 		run_last_pipe(tmp, shell, input);
 		exit (EXIT_FAILURE);
 	}
 	waitpid(pid, &status, 0);
 }
 
-void		run_cmd(t_list **head, t_shell *shell)
+int		run_solo_cmd(t_list *cmd, t_shell *shell)
 {
-	return ;
+	char		*command;
+	char		**env;
+	int			check;
+
+	check = check_builtin(cmd->cmd);
+	if (check == 1)
+	{
+		cmd->arg = add_cmd_to_arg(cmd->arg, cmd->cmd);
+		return (run_builtin(cmd->cmd, cmd->arg, shell));
+	}
+	else if (check == 0)
+	{
+		command = search_bin(cmd->cmd, shell);
+		if (command)
+		{
+			cmd->arg = add_cmd_to_arg(cmd->arg, command);
+			free(command);
+		}
+		else
+			cmd->arg = add_cmd_to_arg(cmd->arg, cmd->cmd);
+		env = list_to_mass(shell->env);
+		execve(cmd->arg[0], cmd->arg, env);
+		print_error("minibash: ", 0, cmd->cmd, 1);
+		exit (1);
+	}
+}
+
+int		run_cmd(t_list **head, t_shell *shell)
+{
+	pid_t	pid;
+	t_list	*tmp;
+	int		check;
+
+	tmp = *head;
+	check = check_builtin(tmp->cmd);
+	if (check == 1)
+	{
+		tmp->arg = add_cmd_to_arg(tmp->arg, tmp->cmd);
+		return (run_builtin(tmp->cmd, tmp->arg, shell));
+	}
+	if ((pid = fork()) < 0)
+		exit(EXIT_FAILURE);
+	if (pid == 0)
+	{
+		run_solo_cmd(tmp, shell);
+		exit (EXIT_FAILURE);
+	}
+	wait(NULL);
 }
