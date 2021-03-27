@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 14:16:02 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/27 13:08:17 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/27 13:49:39 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,7 @@ int				put_int(int c);
 
 void			run_pipeline(t_list **head, t_shell *shell);
 
-int			run_cmd(t_list **head, t_shell *shell);
+int			run_cmd(t_list *head, t_shell *shell);
 
 int			prep_rdr(t_list *tmp);
 #endif

@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/24 15:15:48 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/27 13:09:29 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/27 14:24:10 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -832,29 +832,27 @@ void	goparty(t_list **head, t_pt *p, t_shell *shell)
 		if (tmp1->cmd)
 		{
 			if (tmp1->flag == 1)
-			{
 				run_pipeline(&tmp1, shell);
-				break ;
-			}
-			else
-				run_cmd(&tmp1, shell);
+			else if (tmp1->flag == 0)
+				run_cmd(tmp1, shell);
+			if (tmp1)
+				tmp1 = tmp1->next;
+			dup2(shell->oldin, STDIN_FILENO);
+			dup2(shell->oldout, STDOUT_FILENO);
 		}
-		tmp1 = tmp1->next;
 		if (tmp1)
-		{
-			if (tmp1->fdin != -1 && tmp1->fdin > 0)
-				close(tmp1->fdin);
-			if (tmp1->fdout != -1 && tmp1->fdout > 0)
-				close(tmp1->fdout);
-		}
-		dup2(shell->oldin, STDIN_FILENO);
-		dup2(shell->oldout, STDOUT_FILENO);
+			tmp1 = tmp1->next;
 	}
+	// if (tmp1->fdin != -1 && tmp1->fdin > 0)
+	// 	close(tmp1->fdin);
+	// if (tmp1->fdout != -1 && tmp1->fdout > 0)
+	// 	close(tmp1->fdout);
 	// tmp1 = *head;
 	// int j;
 	// while (tmp1)
 	// {
 	// 	printf("COMMAND |%s|\n", tmp1->cmd);
+	// 	printf("FLAG |%d|\n", tmp1->flag);
 	// 	j = 0;
 	// 	while (j < size_arr(tmp1->arg))
 	// 	{

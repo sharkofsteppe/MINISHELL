@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 16:51:43 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/27 12:49:19 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/27 14:24:39 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,8 +112,6 @@ int			run_last_pipe(t_list *cmd, t_shell *shell, int input)
 
 	if (prep_rdr(cmd) == 1)
 		return (EXIT_FAILURE);
-	if (input != STDIN_FILENO && cmd->fdin != -1)
-		dup2(input, STDIN_FILENO);
 	if (check_builtin(cmd->cmd) == 1)
 	{
 		cmd->arg = add_cmd_to_arg(cmd->arg, cmd->cmd);
@@ -130,6 +128,8 @@ int			run_last_pipe(t_list *cmd, t_shell *shell, int input)
 		else
 			cmd->arg = add_cmd_to_arg(cmd->arg, cmd->cmd);
 		env = list_to_mass(shell->env);
+		if (input != STDIN_FILENO)
+			dup2(input, STDIN_FILENO);
 		if (execve(cmd->arg[0], cmd->arg, env) == -1)
 		{
 			print_error("minibash: ", ": command not found", cmd->cmd, 0);
@@ -197,31 +197,31 @@ int		run_pipe_cmd(t_list *cmd, t_shell *shell, int input, int out)
 	return (pidc);
 }
 
-void		run_pipeline(t_list **head, t_shell *shell)
+void		run_pipeline(t_list **cmd, t_shell *shell)
 {
 	int		input;
 	pid_t	pid;
 	int		status;
 	int		fds[2];
-	t_list	*tmp;
 
-	tmp = *head;
 	if ((pid = fork()) < 0)
 		exit(EXIT_FAILURE);
 	if (pid == 0)
 	{
 		input = 0;
-		while (tmp && tmp->flag != 2)
+		while ((*cmd) && (*cmd)->flag == 1)
 		{
 			pipe(fds);
-			run_pipe_cmd(tmp, shell, input, fds[1]);
+			run_pipe_cmd(*cmd, shell, input, fds[1]);
 			close(fds[1]);
 			input = fds[0];
-			tmp = tmp->next;
+			*cmd = (*cmd)->next;
 		}
-		run_last_pipe(tmp, shell, input);
+		run_last_pipe(*cmd, shell, input);
 		exit (EXIT_FAILURE);
 	}
+	while ((*cmd) && (*cmd)->flag != 2)
+		*cmd = (*cmd)->next;
 	waitpid(pid, &status, 0);
 }
 
@@ -244,14 +244,12 @@ int		run_solo_cmd(t_list *cmd, t_shell *shell)
 	free_split(env);
 }
 
-int		run_cmd(t_list **head, t_shell *shell)
+int		run_cmd(t_list *tmp, t_shell *shell)
 {
 	pid_t	pid;
-	t_list	*tmp;
 	int		status;
 	int		check;
 
-	tmp = *head;
 	if (prep_rdr(tmp) == 1)
 		return (EXIT_FAILURE);
 	check = check_builtin(tmp->cmd);
