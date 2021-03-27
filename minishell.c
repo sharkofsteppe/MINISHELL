@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/24 15:15:48 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/26 19:35:48 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/27 13:09:29 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -840,6 +840,15 @@ void	goparty(t_list **head, t_pt *p, t_shell *shell)
 				run_cmd(&tmp1, shell);
 		}
 		tmp1 = tmp1->next;
+		if (tmp1)
+		{
+			if (tmp1->fdin != -1 && tmp1->fdin > 0)
+				close(tmp1->fdin);
+			if (tmp1->fdout != -1 && tmp1->fdout > 0)
+				close(tmp1->fdout);
+		}
+		dup2(shell->oldin, STDIN_FILENO);
+		dup2(shell->oldout, STDOUT_FILENO);
 	}
 	// tmp1 = *head;
 	// int j;
@@ -1275,6 +1284,8 @@ int		main(int argc, char **argv, char **env)
 	shell.h_ind = 0;
 	init_envp(env, &shell.env);
 	shell.status = check_term(argc, argv, &shell);
+	shell.oldin = dup(STDIN_FILENO);
+	shell.oldout = dup(STDOUT_FILENO);
 	while (1)
 	{
 		turn_off(&shell);

@@ -12,7 +12,7 @@ OBJS	=	${SRCS:.c=.o} ${UTILS:.c=.o} ${PARSER:.c=.o}
 LIBS	=	-ltermcap -Llibft -lft
 INCL	=	-Iincludes -Ilibft
 CC		=	gcc
-CFLAGS	=	-Wall -Wextra #-g -fsanitize=address
+CFLAGS	=	-Wall -Wextra -g -fsanitize=address
 RM		=	rm
 MAKES	=	makes
 all: ${MAKES} ${NAME}

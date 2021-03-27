@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 14:33:16 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/25 19:19:09 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/27 12:28:14 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,8 @@ typedef struct		s_list
 	char			*outfile;
 	int				fdin;
 	int				fdout;
+	int				in_type;
+	int				out_type;
 	int				fdpipe[2];
 	t_rdr			*rdr_l;
 	struct s_list	*next;

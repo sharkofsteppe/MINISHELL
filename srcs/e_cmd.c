@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 16:51:43 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/26 19:41:14 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/27 12:49:19 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,9 @@ int			run_last_pipe(t_list *cmd, t_shell *shell, int input)
 	char		*command;
 	char		**env;
 
-	if (input != STDIN_FILENO)
+	if (prep_rdr(cmd) == 1)
+		return (EXIT_FAILURE);
+	if (input != STDIN_FILENO && cmd->fdin != -1)
 		dup2(input, STDIN_FILENO);
 	if (check_builtin(cmd->cmd) == 1)
 	{
@@ -142,6 +144,8 @@ int			exec_pipe(t_list *cmd, t_shell *shell)
 	char		*command;
 	char		**env;
 
+	if (prep_rdr(cmd) == 1)
+		return (EXIT_FAILURE);
 	if (check_builtin(cmd->cmd) == 1)
 	{
 		cmd->arg = add_cmd_to_arg(cmd->arg, cmd->cmd);
@@ -225,51 +229,47 @@ int		run_solo_cmd(t_list *cmd, t_shell *shell)
 {
 	char		*command;
 	char		**env;
-	int			check;
 
-	check = check_builtin(cmd->cmd);
-	if (check == 1)
+	command = search_bin(cmd->cmd, shell);
+	if (command)
 	{
+		cmd->arg = add_cmd_to_arg(cmd->arg, command);
+		free(command);
+	}
+	else
 		cmd->arg = add_cmd_to_arg(cmd->arg, cmd->cmd);
-		return (run_builtin(cmd->cmd, cmd->arg, shell));
-	}
-	else if (check == 0)
-	{
-		command = search_bin(cmd->cmd, shell);
-		if (command)
-		{
-			cmd->arg = add_cmd_to_arg(cmd->arg, command);
-			free(command);
-		}
-		else
-			cmd->arg = add_cmd_to_arg(cmd->arg, cmd->cmd);
-		env = list_to_mass(shell->env);
-		execve(cmd->arg[0], cmd->arg, env);
-		print_error("minibash: ", ": command not found", cmd->cmd, 0);
-		exit (1);
-	}
+	env = list_to_mass(shell->env);
+	execve(cmd->arg[0], cmd->arg, env);
+	print_error("minibash: ", ": command not found", cmd->cmd, 0);
+	free_split(env);
 }
 
 int		run_cmd(t_list **head, t_shell *shell)
 {
 	pid_t	pid;
 	t_list	*tmp;
+	int		status;
 	int		check;
 
 	tmp = *head;
-	prep_rdr(tmp);
+	if (prep_rdr(tmp) == 1)
+		return (EXIT_FAILURE);
 	check = check_builtin(tmp->cmd);
 	if (check == 1)
 	{
 		tmp->arg = add_cmd_to_arg(tmp->arg, tmp->cmd);
 		return (run_builtin(tmp->cmd, tmp->arg, shell));
 	}
-	if ((pid = fork()) < 0)
-		exit(EXIT_FAILURE);
-	if (pid == 0)
+	else if (check == 0)
 	{
-		run_solo_cmd(tmp, shell);
-		exit (EXIT_FAILURE);
+		if ((pid = fork()) < 0)
+			exit(EXIT_FAILURE);
+		if (pid == 0)
+		{
+			run_solo_cmd(tmp, shell);
+			exit (EXIT_FAILURE);
+		}
+		else
+			waitpid(pid, &status, 0);
 	}
-	wait(NULL);
 }

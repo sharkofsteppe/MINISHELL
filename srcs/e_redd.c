@@ -6,11 +6,41 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 18:01:27 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/26 19:40:33 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/27 12:47:28 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void	handle_rdr(t_list *tmp)
+{
+	if (tmp->infile)
+	{
+		tmp->fdin = open(tmp->infile, tmp->in_type, S_IRWXU);
+		if (tmp->fdin == -1)
+		{
+			print_error("minibash: ", 0, tmp->infile, 1);
+			g_signal = 1;
+			return ;
+		}
+		dup2(tmp->fdin, STDIN_FILENO);
+	}
+	if (tmp->outfile)
+	{
+		tmp->fdout = open(tmp->outfile, tmp->out_type, S_IRWXU);
+		if (tmp->fdout == -1)
+		{
+			print_error("minibash: ", 0, tmp->outfile, 1);
+			g_signal = 1;
+			return ;
+		}
+		dup2(tmp->fdout, STDOUT_FILENO);
+	}
+	if (tmp->fdin != -1)
+		close(tmp->fdin);
+	if (tmp->fdout != -1)
+		close(tmp->fdout);
+}
 
 void	rdr_add_back(t_rdr **rdr, t_rdr *new)
 {
@@ -55,17 +85,26 @@ void	chose_rdr(t_list *tmp)
 		while (tp != NULL)
 		{
 			if (tp->type == 1)
+			{
 				tmp->outfile = tp->filename;
+				tmp->out_type = O_CREAT | O_WRONLY | O_APPEND;
+			}
 			else if (tp->type == 2)
+			{
 				tmp->outfile = tp->filename;
+				tmp->out_type = O_CREAT | O_WRONLY | O_TRUNC;
+			}
 			else if (tp->type == 3)
+			{
 				tmp->infile = tp->filename;
+				tmp->in_type = O_RDONLY;
+			}
 			tp = tp->next;
 		}
 	}
 }
 
-void	prep_rdr(t_list *tmp)
+int		prep_rdr(t_list *tmp)
 {
 	int		i;
 	int		fd;
@@ -79,29 +118,47 @@ void	prep_rdr(t_list *tmp)
 			{
 				fd = open(tmp->rdr[i + 1], O_CREAT | O_WRONLY | O_APPEND, S_IRWXU);
 				if (fd == -1)
+				{
 					print_error("minibash: ", 0, tmp->rdr[i + 1], 1);
+					g_signal = 1;
+					return (EXIT_FAILURE);
+				}
 				else
 					rdr_add_back(&tmp->rdr_l, new_rdr(tmp->rdr[i + 1], 1, 0));
 				i += 2;
+				close(fd);
 			}
 			else if (ft_strncmp(">", tmp->rdr[i], 2) == 0)
 			{
 				fd = open(tmp->rdr[i + 1], O_CREAT | O_WRONLY | O_TRUNC, S_IRWXU);
 				if (fd == -1)
+				{
 					print_error("minibash: ", 0, tmp->rdr[i + 1], 1);
+					g_signal = 1;
+					return (EXIT_FAILURE);
+				}
 				else
 					rdr_add_back(&tmp->rdr_l, new_rdr(tmp->rdr[i + 1], 2, 0));
 				i += 2;
+				close(fd);
 			}
 			else if (ft_strncmp("<", tmp->rdr[i], 2) == 0)
 			{
 				fd = open(tmp->rdr[i + 1], O_RDONLY, S_IRWXU);
 				if (fd == -1)
+				{
 					print_error("minibash: ", 0, tmp->rdr[i + 1], 1);
+					g_signal = 1;
+					return (EXIT_FAILURE);
+				}
 				else
 					rdr_add_back(&tmp->rdr_l, new_rdr(tmp->rdr[i + 1], 3, 0));
 				i += 2;
+				close(fd);
 			}
 		}
 	}
+	chose_rdr(tmp);
+	handle_rdr(tmp);
+	return (EXIT_SUCCESS);
 }

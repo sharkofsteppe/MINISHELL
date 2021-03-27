@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/06 20:59:19 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/25 23:52:47 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/27 12:58:18 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ t_list	*ft_lstnew(void *content)
 	new->rdr = NULL;
 	new->fdpipe[0] = -1;
 	new->fdpipe[1] = -1;
-	new->fdin = 0;
-	new->fdout = 1;
+	new->fdin = -1;
+	new->fdout = -1;
 	new->rdr_l = NULL;
 	new->outfile = NULL;
 	new->infile = NULL;
