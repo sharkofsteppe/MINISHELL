@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   e_cmd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 16:51:43 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/28 14:41:57 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/28 18:44:24 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,7 +133,6 @@ int			run_last_pipe(t_list *cmd, t_shell *shell, int input)
 		if (execve(cmd->arg[0], cmd->arg, env) == -1)
 		{
 			print_error("minibash: ", ": command not found", cmd->cmd, 0);
-			printf("%d\n", errno);
 			exit (1);
 		}
 	}

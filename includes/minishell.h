@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 14:16:02 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/28 14:39:13 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/28 18:35:23 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,10 @@
 # define CYA "\x1b[36m"
 # define RES "\x1b[0m"
 # define MAXBUF 9048
-
+# define CD_CHDIR 0
+# define CD_NOHOME 1
+# define CD_NOOLDPWD 2
+# define CD_GETCWD 3
 typedef struct	s_envp
 {
 	char			*name;
@@ -59,6 +62,7 @@ typedef struct	s_shell
 	int				status;
 	int				oldin;
 	int				oldout;
+	struct termios	rest;
 	struct termios	term;
 	t_envp			*env;
 }				t_shell;

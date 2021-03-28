@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/24 15:15:48 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/28 14:53:21 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/28 18:35:11 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -1162,11 +1162,8 @@ void	handle_ctrlc(t_shell *shell)
 
 void	clear_console(t_shell *shell)
 {
-	int	len;
-
-	len = ft_strlen(shell->buf);
-	while (len-- > 0)
-		ft_putstr_fd("\b \b", 1);
+	ft_putstr_fd("\x1b[H\x1b[J", STDOUT_FILENO);
+	print_promt();
 	ft_bzero(shell->buf, MAXBUF);
 }
 
@@ -1241,8 +1238,8 @@ char	*readline(t_shell *shell)
 
 void	turn_off(t_shell *shell)
 {
-	ft_bzero(&shell->term, sizeof(struct termios));
 	tcgetattr(STDIN_FILENO, &shell->term);
+	tcgetattr(STDIN_FILENO, &shell->rest);
 	shell->term.c_lflag &= ~(ICANON | ECHO);
 	shell->term.c_cc[VMIN] = 1;
 	shell->term.c_cc[VTIME] = 0;
@@ -1251,9 +1248,7 @@ void	turn_off(t_shell *shell)
 
 void	turn_on(t_shell *shell)
 {
-	tcgetattr(STDIN_FILENO, &shell->term);
-	shell->term.c_lflag |= (ICANON | ECHO);
-	tcsetattr(STDIN_FILENO, TCSANOW, &shell->term);
+	tcsetattr(STDIN_FILENO, TCSANOW, &shell->rest);
 }
 
 char	**history_add(char **old, char *new_line, t_shell *shell)

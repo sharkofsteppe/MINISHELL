@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 14:45:41 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/26 15:23:16 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/28 16:45:16 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,12 @@ int		builtin_export(char **argv, t_shell *shell)
 			if (fetch != NULL)
 			{
 				name = ft_substr(argv[i], 0, ft_strlen(argv[i]) - ft_strlen(fetch));
+				if(ft_strchr(name, '+'))
+				{
+					free(name);
+					print_error("minibash: export: ", ": not a valid identifier", argv[i], 0);
+					continue ;
+				}
 				if ((check_env(name, shell)) == 0)
 					envp_add_back(&shell->env, new_elem(ft_strdup(name), ft_strdup(fetch + 1)));
 				else if ((check_env(name, shell)) == 1)
