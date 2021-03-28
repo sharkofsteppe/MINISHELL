@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 14:16:02 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/27 13:49:39 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/28 14:39:13 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ typedef struct	s_sort
 	char	*tmpcontent;
 }				t_sort;
 
-int				g_signal;
+t_shell		g_shell;
 
 char			**list_to_mass(t_envp *head);
 int				get_argv_size(char **argv);

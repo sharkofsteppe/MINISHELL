@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   e_cmd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 16:51:43 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/27 14:24:39 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/28 14:41:57 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ int		run_builtin(char *cmd, char **argv, t_shell *shell)
 		return (builtin_export(argv, shell));
 	else if (ft_strncmp(cmd, "unset", 6) == 0)
 		return (builtin_unset(argv, shell));
-	return (g_signal);
+	return (1);
 }
 
 int		check_builtin(char *cmd)

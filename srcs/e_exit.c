@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   e_exit.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 14:48:52 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/26 15:23:13 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/28 14:41:27 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,6 @@ int		builtin_exit(t_shell *shell, int flag)
 {
 	if (flag)
 		ft_putendl_fd("exit", 1);
-	exit_shell(shell, g_signal);
+	exit_shell(shell, 1);
 	return (1);
 }

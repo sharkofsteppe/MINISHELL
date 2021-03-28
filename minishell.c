@@ -3,12 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/24 15:15:48 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/27 14:24:10 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/28 14:53:21 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#include "libft/libft.h"
+#include "includes/minishell.h"
 
 #include "libft/libft.h"
 #include "includes/minishell.h"
@@ -39,7 +42,6 @@ void	justuer(int *i, char *fmt)
 		(*i)++;
 }
 
-
 void	squots(char **fmt, char c, int *flag)
 {
 	int	interuption;
@@ -56,7 +58,7 @@ void	squots(char **fmt, char c, int *flag)
 		else if (**fmt == '\0')
 		{
 			ft_putendl_fd("syntax error: unclosed quotes", 1);
-			g_signal = 1600;
+			g_shell.status = 1600;
 			*flag = 1;
 			break ;
 		}
@@ -74,7 +76,7 @@ void	squotsl(char **fmt, char c, int *flag)
 		if (**fmt == '\0')
 		{
 			ft_putendl_fd("syntax error: unclosed quotes", 1);
-			g_signal = 1601;
+			g_shell.status = 1601;
 			*flag = 1;
 			break ;
 		}
@@ -87,7 +89,7 @@ int		checkquots(char *fmt)
 	int	flag;
 
 	flag = 0;
-	while(*fmt != '\0')
+	while (*fmt != '\0')
 	{
 		if (*fmt == '\\' && *(fmt + 1) != '\0')
 			fmt += 2;
@@ -99,6 +101,7 @@ int		checkquots(char *fmt)
 	}
 	return (flag);
 }
+
 int		findlast(char *fmt)
 {
 	int	i;
@@ -112,9 +115,9 @@ int		findlast(char *fmt)
 				i--;
 		}
 		if (fmt[i - 1] != '\\')
-			return(fmt[i]);
+			return (fmt[i]);
 		else
-			return(fmt[i - 1]);
+			return (fmt[i - 1]);
 	}
 	return (0);
 }
@@ -168,13 +171,11 @@ int		checkcolons(char *fmt)
 		|| doublesym(fmt, '|', '|'))
 	{
 		ft_putendl_fd("syntax error near unexpected token", 1);
-		g_signal = 258;
+		g_shell.status = 258;
 		return (1);
 	}
 	return (0);
 }
-
-
 
 int		checkrdr(char *fmt)
 {
@@ -201,7 +202,7 @@ int		checkrdr(char *fmt)
 	if (ret == 1)
 	{
 		ft_putendl_fd("syntax error near unexpected token", 1);
-		g_signal = 258;
+		g_shell.status = 258;
 	}
 	return (ret);
 }
@@ -245,7 +246,7 @@ int		rdractedeux(char *fmt)
 	if (ret == 1)
 	{
 		ft_putendl_fd("syntax error near unexpected token", 1);
-		g_signal = 258;
+		g_shell.status = 258;
 	}
 	return (ret);
 }
@@ -268,7 +269,8 @@ int		analysis(char *line)
 
 int		dol_sym(char c)
 {
-	if (c == '\\' || c == '\'' || c == '"' || c == '\0' || c == ' ' || c == '$')
+	if (c == '\\' || c == '\'' || c == '"' || c == '\0' ||
+		c == ' ' || c == '$' || c == '=')
 		return (0);
 	return (1);
 }
@@ -306,15 +308,13 @@ char	*ecrq(char *str, t_list *tmp)
 	return (str + 2);
 }
 
-
-
 char	*dollar(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 {
 	char	*del;
 	char	*dlr;
 
 	if (ft_isdigit(*str))
-		return(++str);
+		return (++str);
 	while (dol_sym(*str))
 	{
 		del = p->dlr;
@@ -354,10 +354,12 @@ char	*qun(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 			str++;
 		}
 	}
+	if (*(str + 1) == ' ')
+		p->cmd = 1;
 	return (++str);
 }
 
-char	*qdeux(char *str, t_list *tmp)
+char	*qdeux(char *str, t_list *tmp, t_pt *p)
 {
 	char *del;
 
@@ -370,23 +372,36 @@ char	*qdeux(char *str, t_list *tmp)
 		free(del);
 		str++;
 	}
+	if (*(str + 1) == ' ')
+		p->cmd = 1;
 	return (++str);
 }
 
-
-
-char	*comandas( char *str, t_list *tmp, t_pt *p, t_shell *shell)
+char	*quest(char *str, t_list *tmp)
 {
 	char	*del;
+	char	*new;
 
-	// printf("%s\n", str);
+	new = ft_itoa(g_shell.status);
+	del = tmp->cmd;
+	tmp->cmd = ft_strjoin(tmp->cmd, new);
+	free(new);
+	free(del);
+	return (str + 2);
+}
+
+char	*comandas(char *str, t_list *tmp, t_pt *p, t_shell *shell)
+{
+	char	*del;
 
 	if (*str == '"')
 		return (qun(++str, tmp, p, shell));
 	if (*str == '\'')
-		return (qdeux(++str, tmp));
+		return (qdeux(++str, tmp, p));
 	if (*str == '\\')
 		return (ecr(str, tmp));
+	if (*str == '$' && *(str + 1) == '?')
+		return (quest(str, tmp));
 	if (*str == '$' && *(str + 1) != '\\' && *(str + 1) != '\0')
 		return (dollar(++str, tmp, p, shell));
 	del = tmp->cmd;
@@ -398,22 +413,18 @@ char	*comandas( char *str, t_list *tmp, t_pt *p, t_shell *shell)
 	return (str);
 }
 
-
-
-int		rd_sym(char c)
+int		stop_sym(char c)
 {
-	if (c == '<' || c == '>')
+	if (c == '<' || c == '>' || c == ' ' || c == '\0' || c == '>')
 		return (1);
 	return (0);
 }
 
-
 char	*ecrarg(char *str, t_list *tmp, t_pt *p)
 {
-
-	char *sub;
-	char *del;
-	char *one;
+	char	*sub;
+	char	*del;
+	char	*one;
 
 	sub = ft_substr(str, 1, 1);
 	del = sub;
@@ -450,7 +461,7 @@ char	*ecrqarg(char *str, t_pt *p)
 
 char	*om_arg(char *str, t_list *tmp, t_pt *p)
 {
-	if (*(str +1) == ' ' || *(str +1) == '\0')
+	if (*(str + 1) == ' ' || *(str + 1) == '\0')
 	{
 		tmp->arg = newarr(tmp->arg, "");
 		p->q += 1;
@@ -466,7 +477,7 @@ char	*dollararg(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 	char	*dlr;
 
 	if (ft_isdigit(*str))
-		return(om_arg(str, tmp, p));
+		return (om_arg(str, tmp, p));
 	while (dol_sym(*str))
 	{
 		del = p->dlr;
@@ -491,13 +502,14 @@ char	*dollararg(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 	p->dlr = 0;
 	return (str);
 }
+
 char	*dollarqarg(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 {
 	char	*del;
 	char	*dlr;
 
 	if (ft_isdigit(*str))
-		return(om_arg(str, tmp, p));
+		return (om_arg(str, tmp, p));
 	while (dol_sym(*str))
 	{
 		del = p->dlr;
@@ -517,18 +529,40 @@ char	*dollarqarg(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 	return (str);
 }
 
+char	*questarg(char *str, t_list *tmp, t_pt *p)
+{
+	char	*del;
+	char	*new;
+
+	new = ft_itoa(g_shell.status);
+	del = p->safe;
+	p->safe = ft_strjoin(p->safe, new);
+	free(new);
+	free(del);
+	if (*(str + 2) == '\0' || *(str + 2) == ' ')
+	{
+		tmp->arg = newarr(tmp->arg, p->safe);
+		free(p->safe);
+		p->safe = NULL;
+	}
+	return (str + 2);
+}
+
 char	*qarg(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 {
-	char *del;
+	char	*del;
+
 	while (*str != '"')
 	{
 		if (*str == '\\')
 			str = ecrqarg(str, p);
+		if (*str == '$' && *(str + 1) == '?')
+			str = questarg(str, tmp, p);
 		if (*str == '$' && *(str + 1) != '\\')
 			str = dollarqarg(++str, tmp, p, shell);
 		if (*str == '"')
 			break ;
-		if (*str != '\\')
+		if (*str != '\\' && (*str != '$' && *(str + 1) != '?'))
 		{
 			del = p->safe;
 			p->safe = ft_joinsym(p->safe, *str);
@@ -547,7 +581,8 @@ char	*qarg(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 
 char	*qdeuxarg(char *str, t_list *tmp, t_pt *p)
 {
-	char *del;
+	char	*del;
+
 	while (*str != '\'')
 	{
 		if (*str == '\'')
@@ -566,17 +601,18 @@ char	*qdeuxarg(char *str, t_list *tmp, t_pt *p)
 	return (++str);
 }
 
-
-
 char	*argumentas(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 {
 	char	*del;
+
 	if (*str == '"')
 		return (qarg(++str, tmp, p, shell));
 	if (*str == '\'')
 		return (qdeuxarg(++str, tmp, p));
 	if (*str == '\\')
 		return (ecrarg(str, tmp, p));
+	if (*str == '$' && *(str + 1) == '?')
+		return (questarg(str, tmp, p));
 	if (*str == '$' && *(str + 1) != '\\')
 		return (dollararg(++str, tmp, p, shell));
 	del = p->safe;
@@ -584,7 +620,7 @@ char	*argumentas(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 	free(del);
 	if (*str != '\0')
 		str++;
-	if ((*str == ' ' || *str == '\0' || *str == '>' || *str == '<') && p->safe != NULL)
+	if (stop_sym(*str) && p->safe != NULL)
 	{
 		tmp->arg = newarr(tmp->arg, p->safe);
 		free(p->safe);
@@ -605,7 +641,6 @@ char	*ecrrdr(char *str, t_list *tmp, t_pt *p)
 	p->safe = ft_joinsym(p->safe, *sub);
 	free(one);
 	free(sub);
-
 	if (*(str + 2) == '\0' || *(str + 2) == ' ')
 	{
 		tmp->rdr = newarr(tmp->rdr, p->safe);
@@ -636,7 +671,7 @@ char	*ecrqrdr(char *str, t_pt *p)
 
 char	*om_handle(char *str, t_list *tmp, t_pt *p)
 {
-	if (*(str +1) == ' ' || *(str +1) == '\0')
+	if (*(str + 1) == ' ' || *(str + 1) == '\0')
 	{
 		tmp->rdr = newarr(tmp->rdr, "");
 		p->q += 1;
@@ -661,9 +696,6 @@ char	*dollarrdr(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 		str++;
 	}
 	del = p->safe;
-
-
-
 	dlr = get_env(p->dlr, shell);
 	if (dlr != NULL)
 	{
@@ -682,18 +714,40 @@ char	*dollarrdr(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 	return (str);
 }
 
+char	*questrdr(char *str, t_list *tmp, t_pt *p)
+{
+	char	*del;
+	char	*new;
+
+	new = ft_itoa(g_shell.status);
+	del = p->safe;
+	p->safe = ft_strjoin(p->safe, new);
+	free(new);
+	free(del);
+	if (*(str + 2) == '\0' || *(str + 2) == ' ')
+	{
+		tmp->rdr = newarr(tmp->rdr, p->safe);
+		free(p->safe);
+		p->safe = NULL;
+	}
+	return (str + 2);
+}
+
 char	*qrdr(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 {
-	char *del;
+	char	*del;
+
 	while (*str != '"')
 	{
 		if (*str == '\\')
 			str = ecrqrdr(str, p);
+		if (*str == '$' && *(str + 1) == '?')
+			str = questrdr(str, tmp, p);
 		if (*str == '$' && *(str + 1) != '\\')
 			str = dollarrdr(++str, tmp, p, shell);
 		if (*str == '"')
 			break ;
-		if (*str != '\\')
+		if (*str != '\\' && (*str != '$' && *(str + 1) != '?'))
 		{
 			del = p->safe;
 			p->safe = ft_joinsym(p->safe, *str);
@@ -713,6 +767,7 @@ char	*qrdr(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 char	*qdeuxrdr(char *str, t_list *tmp, t_pt *p)
 {
 	char *del;
+
 	while (*str != '\'')
 	{
 		if (*str == '\'')
@@ -734,6 +789,7 @@ char	*qdeuxrdr(char *str, t_list *tmp, t_pt *p)
 char	*rec_sym(char *str, t_pt *p)
 {
 	char	*del;
+
 	if (p->q == 1 && (*str == '>' || *str == '<'))
 		return (str);
 	del = p->safe;
@@ -751,12 +807,15 @@ char	*redirectas(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 		return (qdeuxrdr(++str, tmp, p));
 	if (*str == '\\')
 		return (ecrrdr(str, tmp, p));
+	if (*str == '$' && *(str + 1) == '?')
+		return (questrdr(str, tmp, p));
 	if (*str == '$' && *(str + 1) != '\\')
 		return (dollarrdr(++str, tmp, p, shell));
 	if (*str != ' ')
 		str = rec_sym(str, p);
 	if ((*str != '>' && p->q == 0) ||
-		((*str == ' ' || *str == '\0') && p->safe != NULL) || ((*str == '>' || *str == '<') && p->q == 1))
+		((*str == ' ' || *str == '\0') && p->safe != NULL) ||
+		((*str == '>' || *str == '<') && p->q == 1))
 	{
 		tmp->rdr = newarr(tmp->rdr, p->safe);
 		free(p->safe);
@@ -774,18 +833,16 @@ char	*rdrdisperse(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 		if (*str == ' ')
 			str++;
 		if (p->q == 2)
-			break;
+			break ;
 	}
 	return (str);
 }
 
-
 void	sortout(t_list *tmp, t_pt *p, t_shell *shell)
 {
-
 	char	*str;
-	str = (char *)tmp->content;
 
+	str = (char *)tmp->content;
 	while (*str != '\0')
 	{
 		if (*str == '>' || *str == '<')
@@ -794,26 +851,14 @@ void	sortout(t_list *tmp, t_pt *p, t_shell *shell)
 			str = rdrdisperse(str, tmp, p, shell);
 		}
 		if (p->cmd == 0 && p->q == 2 && *str != ' ')
-		{
 			str = comandas(str, tmp, p, shell);
-		}
 		if (*str == ' ')
-		{
 			str++;
-		}
-		if (p->cmd == 1 && *str != ' ' && !(rd_sym(*str)) && *str != '\0')
+		if (p->cmd == 1 && !(stop_sym(*str)))
 			str = argumentas(str, tmp, p, shell);
 	}
 	p->cmd = 0;
-	// printf("|%s|\n", tmp->cmd);
-	// int i = -1;
-	// while (tmp->arg[++i])
-	// {
-	// 	printf("%d\n", i);
-	// 	printf("%s\n", tmp->arg[i]);
-	// }
 }
-
 
 void	goparty(t_list **head, t_pt *p, t_shell *shell)
 {
@@ -872,7 +917,6 @@ void	goparty(t_list **head, t_pt *p, t_shell *shell)
 	ft_lstclear(head,free);
 
 }
-
 
 void	go_ahead(t_pt *p, t_list **head, t_shell *shell)
 {
@@ -972,8 +1016,8 @@ void	every_move(t_pt *p)
 
 void	step_by_step(t_pt *p, t_list **head, t_shell *shell)
 {
-	char *newstr;
-	t_list *tmp;
+	char	*newstr;
+	t_list	*tmp;
 
 	every_move(p);
 	if (*p->fmt == '\0')
@@ -983,8 +1027,8 @@ void	step_by_step(t_pt *p, t_list **head, t_shell *shell)
 		ft_lstadd_back(head, ft_lstnew(newstr));
 		if (tmp != 0 && tmp->flag == 1)
 		{
-				tmp = ft_lstlast(*head);
-				tmp->flag = 2;
+			tmp = ft_lstlast(*head);
+			tmp->flag = 2;
 		}
 		goparty(head, p, shell);
 	}
@@ -1008,22 +1052,6 @@ int		processing(char *line, t_shell *shell)
 		else
 			step_by_step(p, &head, shell);
 	}
-	// tmp = head;
-	// int i;
-	// int j;
-	// while (tmp)
-	// {
-	// 	printf("ЛИСТ НОМЕР %d:COMMAND %s\n",i, tmp->cmd);
-	// 	j = 0;
-	// 	while (j < size_arr(tmp->arg))
-	// 	{
-	// 		printf("АРГУМЕНТЫ ЛИСТА %d, %s\n", i, tmp->arg[j]);
-	// 		j++;
-	// 	}
-	// 	tmp = tmp->next;
-	// 	i++;
-	// }
-	// ft_lstclear(&head,free);
 	free(p);
 	return (0);
 }
@@ -1274,24 +1302,23 @@ void	add_to_history(char *line, t_shell *shell)
 int		main(int argc, char **argv, char **env)
 {
 	char	*line;
-	t_shell	shell;
 
-	shell.status = 0;
-	shell.env = NULL;
-	shell.history = NULL;
-	shell.h_ind = 0;
-	init_envp(env, &shell.env);
-	shell.status = check_term(argc, argv, &shell);
-	shell.oldin = dup(STDIN_FILENO);
-	shell.oldout = dup(STDOUT_FILENO);
+	g_shell.status = 0;
+	g_shell.env = NULL;
+	g_shell.history = NULL;
+	g_shell.h_ind = 0;
+	init_envp(env, &g_shell.env);
+	g_shell.status = check_term(argc, argv, &g_shell);
+	g_shell.oldin = dup(STDIN_FILENO);
+	g_shell.oldout = dup(STDOUT_FILENO);
 	while (1)
 	{
-		turn_off(&shell);
-		line = readline(&shell);
-		add_to_history(line, &shell);
-		turn_on(&shell);
+		turn_off(&g_shell);
+		line = readline(&g_shell);
+		add_to_history(line, &g_shell);
+		turn_on(&g_shell);
 		if (analysis(line) == 0)
-			processing(line, &shell);
+			processing(line, &g_shell);
 		else
 			print_error("Some error", 0, 0, 0);
 		free(line);

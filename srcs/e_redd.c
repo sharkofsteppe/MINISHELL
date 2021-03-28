@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   e_redd.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 18:01:27 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/27 14:22:58 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/28 14:42:27 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	handle_rdr(t_list *tmp)
 		if (tmp->fdin == -1)
 		{
 			print_error("minibash: ", 0, tmp->infile, 1);
-			g_signal = 1;
+			g_shell.status = 1;
 			return ;
 		}
 		dup2(tmp->fdin, STDIN_FILENO);
@@ -31,7 +31,7 @@ void	handle_rdr(t_list *tmp)
 		if (tmp->fdout == -1)
 		{
 			print_error("minibash: ", 0, tmp->outfile, 1);
-			g_signal = 1;
+			g_shell.status = 1;
 			return ;
 		}
 		dup2(tmp->fdout, STDOUT_FILENO);
@@ -120,7 +120,7 @@ int		prep_rdr(t_list *tmp)
 				if (fd == -1)
 				{
 					print_error("minibash: ", 0, tmp->rdr[i + 1], 1);
-					g_signal = 1;
+					g_shell.status = 1;
 					return (EXIT_FAILURE);
 				}
 				else
@@ -134,7 +134,7 @@ int		prep_rdr(t_list *tmp)
 				if (fd == -1)
 				{
 					print_error("minibash: ", 0, tmp->rdr[i + 1], 1);
-					g_signal = 1;
+					g_shell.status = 1;
 					return (EXIT_FAILURE);
 				}
 				else
@@ -148,7 +148,7 @@ int		prep_rdr(t_list *tmp)
 				if (fd == -1)
 				{
 					print_error("minibash: ", 0, tmp->rdr[i + 1], 1);
-					g_signal = 1;
+					g_shell.status = 1;
 					return (EXIT_FAILURE);
 				}
 				else
