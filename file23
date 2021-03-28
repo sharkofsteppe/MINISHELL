@@ -1,0 +1,15 @@
+qwert
+total 232
+drwxr-xr-x   13 gesperan  student    442 Mar 28 14:26 .
+drwxr-xr-x    3 gesperan  student    102 Mar 26 16:51 ..
+-rw-r--r--    1 gesperan  student   8196 Mar 26 16:51 .DS_Store
+drwxr-xr-x   14 gesperan  student    476 Mar 28 14:23 .git
+drwxr-xr-x    3 gesperan  student    102 Mar 26 16:51 .vscode
+-rw-r--r--    1 gesperan  student    978 Mar 28 14:14 Makefile
+-rwx------    1 gesperan  student      6 Mar 28 14:27 file23
+drwxr-xr-x    3 gesperan  student    102 Mar 28 14:12 includes
+drwxr-xr-x  113 gesperan  student   3842 Mar 28 14:14 libft
+-rwxr-xr-x    1 gesperan  student  45052 Mar 28 14:23 minishell
+-rw-r--r--    1 gesperan  student  22805 Mar 28 14:23 minishell.c
+-rw-r--r--    1 gesperan  student  24980 Mar 28 14:23 minishell.o
+drwxr-xr-x   26 gesperan  student    884 Mar 28 14:14 srcs
