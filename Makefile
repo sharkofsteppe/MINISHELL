@@ -7,15 +7,15 @@ HEADERS	=	${addprefix includes/, minishell.h}
 NAME	=	minishell
 SRCS	=	${addprefix ${SRCDIR}, e_cd.c e_echo.c e_env.c e_export.c e_pwd.c e_unset.c e_promt.c e_signal.c e_exit.c e_cmd.c e_redd.c}
 UTILS	=	${addprefix ${SRCDIR}${UTILSDIR}, e_error.c e_free.c e_utils.c e_sort_envp.c}
-PARSER	=	minishell.c processing.c process_utils.c rdrextract.c processing_ponctions.c \
-			rdrponctions.c rdrutils.c analyze.c analyze_utils.c \
+PARSER	=	minishell.c processing.c process_utils.c  processing_ponctions.c \
+			rdrextract.c rdrponctions.c rdrutils.c analyze.c analyze_utils.c \
 			analyze_ponctions.c arguments.c argument_utils.c argument_ponctions.c \
 			comanda.c comanda_ponctions.c
 OBJS	=	${SRCS:.c=.o} ${UTILS:.c=.o} ${PARSER:.c=.o}
 LIBS	=	-ltermcap -Llibft -lft
 INCL	=	-Iincludes -Ilibft
 CC		=	gcc
-CFLAGS	=	-Wall -Wextra
+CFLAGS	=	-Wall -Wextra 
 RM		=	rm
 MAKES	=	makes
 all: ${MAKES} ${NAME}

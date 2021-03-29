@@ -6,7 +6,7 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 14:16:02 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/28 20:26:46 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/29 18:53:11 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,6 +126,9 @@ void			itiswhatitis(int ret);
 void			squotsl(char **fmt, char c, int *flag);
 void			squots(char **fmt, char c, int *flag);
 int				doublerdr(char *fmt);
+int				doublerdrdeux(char *fmt);
+void			onepush(int *i, int *sig);
+void			disp(char *fmt, int i, int *ret);
 
 char			*comandas(char *str, t_list *tmp, t_pt *p, t_shell *shell);
 char			*qdeux(char *str, t_list *tmp, t_pt *p);

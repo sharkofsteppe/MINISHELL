@@ -6,12 +6,18 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/28 19:52:20 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/28 19:53:12 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/29 19:37:28 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft/libft.h"
 #include "includes/minishell.h"
+
+void	onepush(int *i, int *sig)
+{
+	(*i) += 2;
+	(*sig) = 1;
+}
 
 int		dol_sym(char c)
 {

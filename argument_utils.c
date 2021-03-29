@@ -6,7 +6,7 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/28 18:48:45 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/28 18:53:42 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/29 15:05:39 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void	rec_argq(char *str, t_list *tmp, t_pt *p)
 {
 	if ((*(str + 1) == '\0' || *(str + 1) == ' ') && p->safe != NULL)
 	{
-		tmp->rdr = newarr(tmp->rdr, p->safe);
+		tmp->arg = newarr(tmp->arg, p->safe);
 		free(p->safe);
 		p->safe = NULL;
 	}

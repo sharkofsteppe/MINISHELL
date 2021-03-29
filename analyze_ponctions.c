@@ -6,34 +6,71 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/28 18:11:35 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/28 18:14:40 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/29 19:32:40 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft/libft.h"
 #include "includes/minishell.h"
 
+void		disp(char *fmt, int i, int *ret)
+{
+	if (fmt[i] == '>' && fmt[i + 1] == '>' && *ret == 0)
+		*ret = doublesym(&fmt[++i], '>', '>');
+	if (fmt[i] == '>' && *ret == 0)
+		*ret = doublesym(&fmt[i], '>', '<');
+	if (fmt[i] == '>' && fmt[i + 1] != '>' && *ret == 0)
+		*ret = doublesym(&fmt[i], '>', '>');
+	if (fmt[i] == '<' && *ret == 0)
+		*ret = doublesym(&fmt[i], '<', '<');
+	if (fmt[i] == '<' && fmt[i + 1] == ' ' && *ret == 0)
+		*ret = doublesym(&fmt[i], '<', '>');
+}
+
 int		doublerdr(char *fmt)
 {
 	int	i;
 	int	ret;
+	int	sig;
 
-	i = -1;
+	i = 0;
 	ret = 0;
-	while (fmt[++i])
+	sig = 0;
+	while (fmt[i])
 	{
+		if (fmt[i] == '\\' && fmt[i + 1] != '\0')
+			onepush(&i, &sig);
 		if (fmt[i] == '"' || fmt[i] == '\'')
 			justuer(&i, fmt);
 		if (fmt[i] == '>' && fmt[i + 1] == '>' && ret == 0)
 			ret = doublesym(&fmt[++i], '>', ';');
+		if (sig == 0)
+			i++;
+		sig = 0;
 	}
-	i = -1;
-	while (fmt[++i])
+	return (ret);
+}
+
+int		doublerdrdeux(char *fmt)
+{
+	int	i;
+	int	ret;
+	int	sig;
+
+	i = 0;
+	ret = 0;
+	sig = 0;
+	while (fmt[i])
 	{
+		if (fmt[i] == '\\' && fmt[i + 1] != '\0')
+			onepush(&i, &sig);
 		if (fmt[i] == '"' || fmt[i] == '\'')
 			justuer(&i, fmt);
 		if (fmt[i] == '>' && fmt[i + 1] == '>' && ret == 0)
 			ret = doublesym(&fmt[++i], '>', '|');
+		if (sig == 0)
+			i++;
+		sig = 0;
 	}
 	return (ret);
 }

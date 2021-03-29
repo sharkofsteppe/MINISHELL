@@ -6,7 +6,7 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/28 17:56:00 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/28 18:20:18 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/29 19:38:55 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,17 +16,24 @@
 int		checkquots(char *fmt)
 {
 	int	flag;
+	int	sig;
 
 	flag = 0;
+	sig = 0;
 	while (*fmt != '\0')
 	{
 		if (*fmt == '\\' && *(fmt + 1) != '\0')
+		{
+			sig = 1;
 			fmt += 2;
+		}
 		if (*fmt == '"')
 			squots(&fmt, '"', &flag);
 		if (*fmt == '\'')
 			squotsl(&fmt, '\'', &flag);
-		fmt++;
+		if (sig == 0)
+			fmt++;
+		sig = 0;
 	}
 	return (flag);
 }
@@ -50,23 +57,21 @@ int		checkrdr(char *fmt)
 {
 	int		i;
 	int		ret;
+	int		sig;
 
-	i = -1;
+	i = 0;
 	ret = 0;
-	while (fmt[++i])
+	sig = 0;
+	while (fmt[i])
 	{
+		if (fmt[i] == '\\' && fmt[i + 1] != '\0')
+			onepush(&i, &sig);
 		if (fmt[i] == '"' || fmt[i] == '\'')
 			justuer(&i, fmt);
-		if (fmt[i] == '>' && fmt[i + 1] == '>' && ret == 0)
-			ret = doublesym(&fmt[++i], '>', '>');
-		if (fmt[i] == '>' && ret == 0)
-			ret = doublesym(&fmt[i], '>', '<');
-		if (fmt[i] == '>' && fmt[i + 1] != '>' && ret == 0)
-			ret = doublesym(&fmt[i], '>', '>');
-		if (fmt[i] == '<' && ret == 0)
-			ret = doublesym(&fmt[i], '<', '<');
-		if (fmt[i] == '<' && fmt[i + 1] == ' ' && ret == 0)
-			ret = doublesym(&fmt[i], '<', '>');
+		disp(fmt, i, &ret);
+		if (sig == 0)
+			i++;
+		sig = 0;
 	}
 	itiswhatitis(ret);
 	return (ret);
@@ -78,6 +83,8 @@ int		rdractedeux(char *fmt)
 	int		ret;
 
 	ret = doublerdr(fmt);
+	if (ret == 0)
+		ret = doublerdrdeux(fmt);
 	c = findlast(fmt);
 	if (c == '<' || c == '>' || doublesym(fmt, '<', ';') ||
 		doublesym(fmt, '<', '|') || doublesym(fmt, '>', ';') ||

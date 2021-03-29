@@ -6,7 +6,7 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/28 19:35:59 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/28 19:53:28 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/29 16:01:23 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,8 @@ char	*dollar(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 		tmp->cmd = ft_strjoin(tmp->cmd, dlr);
 		free(del);
 	}
+	if (*str == ' ')
+		p->cmd = 1;
 	free(p->dlr);
 	p->dlr = 0;
 	return (str);
