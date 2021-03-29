@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 14:16:02 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/28 18:35:23 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/28 20:26:46 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,67 @@ void			envp_clear(t_envp **env, void (*del)(void*));
 int				set_status(int err);
 int				put_int(int c);
 
+int				analysis(char *line);
+int				rdractedeux(char *fmt);
+int				checkrdr(char *fmt);
+int				checkcolons(char *fmt);
+int				checkquots(char *fmt);
+void			justuer(int *i, char *fmt);
+int				findfirst(char *fmt);
+int				findlast(char *fmt);
+int				doublesym(char *fmt, char c, char k);
+void			itiswhatitis(int ret);
+void			squotsl(char **fmt, char c, int *flag);
+void			squots(char **fmt, char c, int *flag);
+int				doublerdr(char *fmt);
+
+char			*comandas(char *str, t_list *tmp, t_pt *p, t_shell *shell);
+char			*qdeux(char *str, t_list *tmp, t_pt *p);
+char			*qun(char *str, t_list *tmp, t_pt *p, t_shell *shell);
+char			*dollar(char *str, t_list *tmp, t_pt *p, t_shell *shell);
+char			*ecr(char *str, t_list *tmp);
+int				dol_sym(char c);
+char			*quest(char *str, t_list *tmp);
+char			*ecrq(char *str, t_list *tmp);
+
+int				processing(char *line, t_shell *shell);
+void			step_by_step(t_pt *p, t_list **head, t_shell *shell);
+void			do_same(t_pt *p, t_list **head);
+void			go_ahead(t_pt *p, t_list **head, t_shell *shell);
+void			every_move(t_pt *p);
+void			pusher(int i, t_pt *p);
+void			skipperl(t_pt *p);
+void			skipper(t_pt *p);
+t_pt			*init_ptr(void);
+void			goparty(t_list **head, t_pt *p, t_shell *shell);
+void			sortout(t_list *tmp, t_pt *p, t_shell *shell);
+
+
+char			*argumentas(char *str, t_list *tmp, t_pt *p, t_shell *shell);
+char			*qdeuxarg(char *str, t_list *tmp, t_pt *p);
+char			*qarg(char *str, t_list *tmp, t_pt *p, t_shell *shell);
+char			*dollararg(char *str, t_list *tmp, t_pt *p, t_shell *shell);
+char			*ecrarg(char *str, t_list *tmp, t_pt *p);
+int				stop_sym(char c);
+char			*om_arg(char *str, t_list *tmp, t_pt *p);
+void			rec_arg(char *str, t_list *tmp, t_pt *p);
+void			rec_argq(char *str, t_list *tmp, t_pt *p);
+char			*dollarqarg(char *str, t_list *tmp, t_pt *p, t_shell *shell);
+char			*questarg(char *str, t_list *tmp, t_pt *p);
+char			*ecrqarg(char *str, t_pt *p);
+
+char			*rdrdisperse(char *str, t_list *tmp, t_pt *p, t_shell *shell);
+char			*redirectas(char *str, t_list *tmp, t_pt *p, t_shell *shell);
+char			*questrdr(char *str, t_list *tmp, t_pt *p);
+char			*qrdr(char *str, t_list *tmp, t_pt *p, t_shell *shell);
+char			*qdeuxrdr(char *str, t_list *tmp, t_pt *p);
+char			*ecrrdr(char *str, t_list *tmp, t_pt *p);
+char			*ecrqrdr(char *str, t_pt *p);
+char			*dollarrdr(char *str, t_list *tmp, t_pt *p, t_shell *shell);
+char			*om_handle(char *str, t_list *tmp, t_pt *p);
+void			rec_strd(char *str, t_list *tmp, t_pt *p);
+void			rec_str(char *str, t_list *tmp, t_pt *p);
+char			*rec_sym(char *str, t_pt *p);
 
 void			run_pipeline(t_list **head, t_shell *shell);
 
