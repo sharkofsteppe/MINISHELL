@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   analyze_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/28 18:10:44 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/29 19:37:08 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/30 14:07:55 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int		doublesym(char *fmt, char c, char k)
 		if (fmt[i] == '\\' && fmt[i + 1] != '\0')
 			onepush(&i, &sig);
 		if (fmt[i] == '"' || fmt[i] == '\'')
-			justuer(&i, fmt);
+			justuer(&i, fmt, &sig);
 		if (fmt[i] == c)
 		{
 			i++;
@@ -87,12 +87,26 @@ int		findfirst(char *fmt)
 	return (fmt[i]);
 }
 
-void	justuer(int *i, char *fmt)
+void	onepush_1(char **fmt, int *sig)
+{
+	(*fmt) += 2;
+	(*sig) = 1;
+}
+
+void	justuer(int *i, char *fmt, int *sig)
 {
 	char	c;
+	int		flag;
 
+	flag = 0;
 	c = fmt[*i];
-	(*i)++;
 	while (fmt[*i] != c)
+	{
+		if (fmt[*i] == '\\' && fmt[*i + 1] != '\0' && !flag)
+		{
+			onepush_1(&fmt, sig);
+			flag = 1;
+		}
 		(*i)++;
+	}
 }

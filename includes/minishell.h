@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 14:16:02 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/29 18:53:11 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/30 13:40:35 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ int				rdractedeux(char *fmt);
 int				checkrdr(char *fmt);
 int				checkcolons(char *fmt);
 int				checkquots(char *fmt);
-void			justuer(int *i, char *fmt);
+void			justuer(int *i, char *fmt, int *sig);
 int				findfirst(char *fmt);
 int				findlast(char *fmt);
 int				doublesym(char *fmt, char c, char k);

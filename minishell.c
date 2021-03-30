@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/24 15:15:48 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/28 20:26:37 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/30 13:50:13 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,10 +56,6 @@ int		readkey(void)
 				return (24);
 			else if (buf[1] == 'B')
 				return (25);
-			else if (buf[1] == 'C')
-				ft_putstr_fd("\e[C", 1);
-			else if (buf[1] == 'D')
-				ft_putstr_fd("\e[D", 1);
 		}
 	}
 	return (c);
@@ -75,7 +71,6 @@ void	handle_backspace(t_shell *shell)
 		tputs(cursor_left, 1, put_int);
 		tputs(delete_character, 1, put_int);
 		shell->buf[len - 1] = '\0';
-		// shell->b_ind--;
 	}
 }
 
@@ -88,17 +83,10 @@ void	handle_ctrld(char *c, t_shell *shell)
 	}
 }
 
-void	handle_ctrlc(t_shell *shell)
-{
-	ft_putstr_fd("\n", STDERR_FILENO);
-	print_promt();
-	ft_bzero(shell->buf, MAXBUF);
-}
-
 void	clear_console(t_shell *shell)
 {
-	ft_putstr_fd("\x1b[H\x1b[J", STDOUT_FILENO);
-	print_promt();
+	tputs(restore_cursor, 1, put_int);
+	tputs(tigetstr("ed"), 1, put_int);
 	ft_bzero(shell->buf, MAXBUF);
 }
 
@@ -135,8 +123,6 @@ void	handle_keys(int key, char *c, t_shell *shell)
 		handle_key_up(shell);
 	else if (key == 25)
 		handle_key_down(shell);
-	else if (key == 3)
-		handle_ctrlc(shell);
 	else if (key == 4)
 		handle_ctrld(c, shell);
 	else if (key == 127)
@@ -151,6 +137,7 @@ char	*readline(t_shell *shell)
 
 	line = NULL;
 	print_promt();
+	tputs(save_cursor, 1, put_int);
 	ft_bzero(shell->buf, MAXBUF);
 	while (1)
 	{
@@ -166,7 +153,7 @@ char	*readline(t_shell *shell)
 		if (c == 10)
 			break ;
 	}
-	line = ft_calloc(ft_strlen(shell->buf), 2);
+	line = ft_calloc(ft_strlen(shell->buf), sizeof(char) + 1);
 	ft_strlcpy(line, shell->buf, MAXBUF);
 	return (line);
 }
