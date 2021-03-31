@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 14:33:16 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/27 12:28:14 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/31 19:22:19 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,12 +30,12 @@
 
 typedef struct		s_rdr
 {
-	char	*filename;
-	int		type;
-	int		flag;
+	char			*filename;
+	int				type;
+	int				flag;
 	struct s_rdr	*next;
-	
 }					t_rdr;
+
 typedef struct		s_list
 {
 	void			*content;
@@ -43,7 +43,7 @@ typedef struct		s_list
 	char			**arg;
 	char			**rdr;
 	int				flag;
-	
+
 	char			*infile;
 	char			*outfile;
 	int				fdin;
@@ -54,8 +54,6 @@ typedef struct		s_list
 	t_rdr			*rdr_l;
 	struct s_list	*next;
 }					t_list;
-
-
 
 typedef struct		s_pt
 {
@@ -149,8 +147,3 @@ void				ft_swap(char *a, char *b);
 char				**nullarr(char **arr, char *str);
 
 #endif
-
-
-// echo echo"'$PWD'"
-// '\f'
-// '\''

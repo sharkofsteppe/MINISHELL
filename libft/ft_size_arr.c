@@ -6,7 +6,7 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/15 10:13:33 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/20 13:46:09 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/31 19:21:13 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ char	**newarr(char **arr, char *str)
 	char	**newarr;
 	int		len;
 	int		i;
+
 	if (!str)
 		return (NULL);
 	if (arr == NULL)
@@ -49,5 +50,3 @@ char	**newarr(char **arr, char *str)
 		ft_memory_free(arr, size_arr(arr));
 	return (newarr);
 }
-
-

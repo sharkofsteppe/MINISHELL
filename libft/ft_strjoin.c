@@ -6,13 +6,11 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/03 16:38:23 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/16 18:55:51 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/31 19:20:16 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
-
-
 
 char	*ft_strjoin(char const *str1, char const *str2)
 {
@@ -26,7 +24,7 @@ char	*ft_strjoin(char const *str1, char const *str2)
 		return (ft_strdup(str2));
 	len1 = ft_strlen(str1);
 	len2 = ft_strlen(str2);
-	newstring = (char*)ft_calloc(sizeof(char), len1 + len2  + 1);
+	newstring = (char*)ft_calloc(sizeof(char), len1 + len2 + 1);
 	i = -1;
 	while (++i < len1)
 		newstring[i] = str1[i];
@@ -35,7 +33,7 @@ char	*ft_strjoin(char const *str1, char const *str2)
 	{
 		newstring[i] = str2[j];
 		i++;
- 	}
+	}
 	return (newstring);
 }
 
@@ -44,6 +42,7 @@ char	*ft_joinsym(char *str, char c)
 	size_t	i;
 	size_t	len;
 	char	*newstr;
+
 	if (str != 0)
 		len = ft_strlen(str);
 	else
@@ -63,6 +62,3 @@ char	*ft_joinsym(char *str, char c)
 		newstr[i] = c;
 	return (newstr);
 }
-// "e"'c'\ho \-"n"
-// gcc minishell.c libft.a -g -fsanitize=address
-// echo "hello \" world"
