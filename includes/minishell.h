@@ -6,7 +6,7 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 14:16:02 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/31 14:44:49 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/31 17:45:50 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,6 +129,8 @@ int				doublerdr(char *fmt);
 int				doublerdrdeux(char *fmt);
 void			onepush(int *i, int *sig);
 void			disp(char *fmt, int i, int *ret);
+void			moverr(int *i, int *sig);
+void			mover(char **fmt, int *sig);
 
 char			*comandas(char *str, t_list *tmp, t_pt *p, t_shell *shell);
 char			*qdeux(char *str, t_list *tmp, t_pt *p);

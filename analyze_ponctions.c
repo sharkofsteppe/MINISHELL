@@ -6,7 +6,7 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/28 18:11:35 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/31 14:45:00 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/31 16:28:13 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,6 +99,7 @@ void	squots(char **fmt, char c, int *flag)
 			(*fmt)++;
 		interuption = 0;
 	}
+	*fmt += 1;
 }
 
 void	squotsl(char **fmt, char c, int *flag)
@@ -108,11 +109,12 @@ void	squotsl(char **fmt, char c, int *flag)
 	{
 		if (**fmt == '\0')
 		{
-			ft_putendl_fd("syntax error: unclosed quotes", 1);
+			ft_putendl_fd("dfgfdsyntax error: unclosed quotes", 1);
 			g_shell.status = 1601;
 			*flag = 1;
 			break ;
 		}
 		(*fmt)++;
 	}
+	*fmt += 1;
 }

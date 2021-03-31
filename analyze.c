@@ -6,7 +6,7 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/28 17:56:00 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/31 14:44:02 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/31 17:47:46 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,12 +28,16 @@ int		checkquots(char *fmt)
 			fmt += 2;
 		}
 		if (*fmt == '"')
+		{
 			squots(&fmt, '"', &flag);
+			sig = 1;
+		}
 		if (*fmt == '\'')
+		{
 			squotsl(&fmt, '\'', &flag);
-		if (sig == 0)
-			fmt++;
-		sig = 0;
+			sig = 1;
+		}
+		mover(&fmt, &sig);
 	}
 	return (flag);
 }

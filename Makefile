@@ -10,12 +10,12 @@ UTILS	=	${addprefix ${SRCDIR}${UTILSDIR}, e_error.c e_free.c e_utils.c e_sort_en
 PARSER	=	minishell.c processing.c process_utils.c  processing_ponctions.c \
 			rdrextract.c rdrponctions.c rdrutils.c analyze.c analyze_utils.c \
 			analyze_ponctions.c arguments.c argument_utils.c argument_ponctions.c \
-			comanda.c comanda_ponctions.c
+			comanda.c comanda_ponctions.c litter.c
 OBJS	=	${SRCS:.c=.o} ${UTILS:.c=.o} ${PARSER:.c=.o}
 LIBS	=	-ltermcap -Llibft -lft
 INCL	=	-Iincludes -Ilibft
 CC		=	gcc
-CFLAGS	=	-Wall -Wextra #-g -fsanitize=address
+CFLAGS	=	-Wall -Wextra
 RM		=	rm
 MAKES	=	makes
 all: ${MAKES} ${NAME}

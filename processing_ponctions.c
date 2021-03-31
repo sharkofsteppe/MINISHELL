@@ -6,7 +6,7 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/28 20:05:28 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/29 16:02:30 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/31 17:38:12 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,58 +35,37 @@ void	sortout(t_list *tmp, t_pt *p, t_shell *shell)
 	p->cmd = 0;
 }
 
+void	reset(t_shell *shell)
+{
+	dup2(shell->oldin, STDIN_FILENO);
+	dup2(shell->oldout, STDOUT_FILENO);
+}
+
 void	goparty(t_list **head, t_pt *p, t_shell *shell)
 {
 	t_list *tmp;
-	t_list *tmp1;
+
 	tmp = *head;
 	while (tmp)
 	{
 		sortout(tmp, p, shell);
 		tmp = tmp->next;
 	}
-
-	// tmp1 = *head;
-	// int j;
-	// while (tmp1)
-	// {
-	// 	printf("COMMAND |%s|\n", tmp1->cmd);
-	// 	printf("FLAG |%d|\n", tmp1->flag);
-	// 	j = 0;
-	// 	while (j < size_arr(tmp1->arg))
-	// 	{
-	// 		printf("TRUE ARG :|%s|\n",tmp1->arg[j]);
-	// 		j++;
-	// 	}
-	// 	tmp1 = tmp1->next;
-	// }
-	tmp1 = *head;
-	while (tmp1)
+	tmp = *head;
+	while (tmp)
 	{
-		if (tmp1->cmd)
+		if (tmp->cmd)
 		{
-			if (tmp1->flag == 1)
-				run_pipeline(&tmp1, shell);
-			else if (tmp1->flag == 0)
-				run_cmd(tmp1, shell);
-			if (tmp1)
-				tmp1 = tmp1->next;
-			dup2(shell->oldin, STDIN_FILENO);
-			dup2(shell->oldout, STDOUT_FILENO);
+			if (tmp->flag == 1)
+				run_pipeline(&tmp, shell);
+			else if (tmp->flag == 0)
+				run_cmd(tmp, shell);
+			if (tmp)
+				tmp = tmp->next;
+			reset(shell);
 		}
-		if (tmp1)
-			tmp1 = tmp1->next;
+		if (tmp)
+			tmp = tmp->next;
 	}
-
-
-	// 	j = 0;
-	// 	while (j < size_arr(tmp1->rdr))
-	// 	{
-	// 		printf("\nREDIRECT ARG:|%s|\n",tmp1->rdr[j]);
-	// 		j++;
-	// 	}
-	// 	printf("\n");
-	// 	tmp1 = tmp1->next;
-	// }
-	ft_lstclear(head,free);
+	ft_lstclear(head, free);
 }
