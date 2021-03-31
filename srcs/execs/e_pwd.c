@@ -1,25 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   e_utils.c                                          :+:      :+:    :+:   */
+/*   e_pwd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/03/01 18:06:37 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/31 14:53:17 by ezachari         ###   ########.fr       */
+/*   Created: 2021/03/01 14:45:23 by ezachari          #+#    #+#             */
+/*   Updated: 2021/03/31 18:44:55 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int		get_argv_size(char **argv)
+int	builtin_pwd(void)
 {
-	int i;
+	char	dir[MAXBUF];
 
-	if (argv == NULL)
-		return (0);
-	i = 0;
-	while (argv[i] != NULL)
-		i++;
-	return (i);
+	ft_bzero(dir, sizeof(dir));
+	getcwd(dir, sizeof(dir));
+	ft_putendl_fd(dir, 1);
+	return (EXIT_SUCCESS);
 }

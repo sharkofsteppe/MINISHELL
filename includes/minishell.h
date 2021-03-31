@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 14:16:02 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/31 17:45:50 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/31 19:43:03 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,23 @@
 # define CD_NOHOME 1
 # define CD_NOOLDPWD 2
 # define CD_GETCWD 3
+
+typedef struct	s_pip
+{
+	int		input;
+	pid_t	pid;
+	int		status;
+	int		fds[2];
+}				t_pip;
+
+typedef struct	s_exp
+{
+	char	*f;
+	char	*name;
+	int		i;
+	int		err;
+}				t_exp;
+
 typedef struct	s_envp
 {
 	char			*name;
@@ -85,14 +102,15 @@ typedef struct	s_sort
 	char	*tmpcontent;
 }				t_sort;
 
-t_shell		g_shell;
+t_shell			g_shell;
 
 char			**list_to_mass(t_envp *head);
 int				get_argv_size(char **argv);
-int				builtin_exit(t_shell *shell, int flag);
+int				builtin_exit(char **argv, t_shell *shell);
 char			**copy_env(char **envp);
 void			init_envp(char **envp, t_envp **head);
 void			envp_add_back(t_envp **envp, t_envp *new);
+int				envpsize_2(t_envp *envp);
 t_envp			*new_elem(char *name, char *content);
 char			*wombo_combo(char *str1, char *str2, char *str3);
 char			*get_env(char *name, t_shell *shell);
@@ -108,7 +126,6 @@ int				builtin_unset(char **argv, t_shell *shell);
 int				builtin_echo(char **argv, int size, t_shell *shell);
 int				check_env(char *name, t_shell *shell);
 void			sort_envp(t_envp **envp);
-int				envpsize_2(t_envp *envp);
 void			envp_clear(t_envp **env, void (*del)(void*));
 int				set_status(int err);
 int				put_int(int c);
@@ -129,8 +146,6 @@ int				doublerdr(char *fmt);
 int				doublerdrdeux(char *fmt);
 void			onepush(int *i, int *sig);
 void			disp(char *fmt, int i, int *ret);
-void			moverr(int *i, int *sig);
-void			mover(char **fmt, int *sig);
 
 char			*comandas(char *str, t_list *tmp, t_pt *p, t_shell *shell);
 char			*qdeux(char *str, t_list *tmp, t_pt *p);
@@ -152,7 +167,6 @@ void			skipper(t_pt *p);
 t_pt			*init_ptr(void);
 void			goparty(t_list **head, t_pt *p, t_shell *shell);
 void			sortout(t_list *tmp, t_pt *p, t_shell *shell);
-
 
 char			*argumentas(char *str, t_list *tmp, t_pt *p, t_shell *shell);
 char			*qdeuxarg(char *str, t_list *tmp, t_pt *p);
@@ -179,10 +193,56 @@ char			*om_handle(char *str, t_list *tmp, t_pt *p);
 void			rec_strd(char *str, t_list *tmp, t_pt *p);
 void			rec_str(char *str, t_list *tmp, t_pt *p);
 char			*rec_sym(char *str, t_pt *p);
+void			mover(char **fmt, int *sig);
+void			moverr(int *i, int *sig);
 
 void			run_pipeline(t_list **head, t_shell *shell);
-
-int			run_cmd(t_list *head, t_shell *shell);
-
-int			prep_rdr(t_list *tmp);
+int				run_cmd(t_list *head, t_shell *shell);
+int				prep_rdr(t_list *tmp);
+t_rdr			*new_rdr(char *file, int type, int flag);
+void			rdr_add_back(t_rdr **rdr, t_rdr *new);
+int				handle_rdr(t_list *tmp);
+void			close_rdr(int fd1, int fd2);
+int				rdr_error(char *file);
+int				check_type_0(t_list *tmp, int *i);
+int				check_type_1(t_list *tmp, int *i);
+int				check_type_2(t_list *tmp, int *i);
+void			rdr_clear(t_rdr **rdr, void (*del)(void*));
+void			set_pwd_env(char *pwd, char *oldpwd, t_shell *shell);
+t_envp			*new_elem(char *name, char *content);
+void			init_envp(char **envp, t_envp **head);
+char			**copy_env(char **envp);
+int				set_env(char *name, char *new, t_shell *shell);
+void			envp_clear(t_envp **env, void (*del)(void*));
+int				envpsize_2(t_envp *envp);
+int				envpsize(t_envp *envp);
+int				check_name(char *name, char **argv, int i, int *err);
+int				check_argv(char **argv, int i, int *err);
+void			add_to_envp(char *name, t_shell *shell, char *fetch);
+void			print_export_err(int *err, char *name);
+void			add_to_envp1(int i, int *err, char **argv, t_shell *shell);
+int				exec_pipe(t_list *cmd, t_shell *shell);
+int				run_pipe_cmd(t_list *cmd, t_shell *shell, int input, int out);
+void			run_pipeline(t_list **cmd, t_shell *shell);
+char			*search_bin_err(char **split, char *line);
+char			*search_bin(char *bin, t_shell *shell);
+int				run_solo_cmd(t_list *cmd, t_shell *shell);
+char			**add_cmd_to_arg(char **arg, char *cmd);
+int				check_builtin(char *cmd);
+int				run_builtin(char *cmd, char **argv, t_shell *shell);
+void			close_rdr(int fd1, int fd2);
+int				rdr_error(char *file);
+int				check_term(int argc, char **argv, t_shell *shell);
+void			turn_off(t_shell *shell);
+void			turn_on(t_shell *shell);
+int				readkey(void);
+void			handle_key_down(t_shell *shell);
+void			handle_keys(int key, char *c, t_shell *shell);
+void			handle_key_up(t_shell *shell);
+void			clear_console(t_shell *shell);
+void			handle_ctrld(char *c, t_shell *shell);
+void			handle_backspace(t_shell *shell);
+char			**history_add(char **old, char *new_line, t_shell *shell);
+void			add_to_history(char *line, t_shell *shell);
+char			*readline(t_shell *shell);
 #endif

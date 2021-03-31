@@ -1,25 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   e_utils.c                                          :+:      :+:    :+:   */
+/*   ter_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/03/01 18:06:37 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/31 14:53:17 by ezachari         ###   ########.fr       */
+/*   Created: 2021/03/31 19:15:01 by ezachari          #+#    #+#             */
+/*   Updated: 2021/03/31 19:15:06 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int		get_argv_size(char **argv)
+void	turn_off(t_shell *shell)
 {
-	int i;
+	tcgetattr(STDIN_FILENO, &shell->term);
+	shell->term.c_lflag &= ~(ICANON | ECHO);
+	shell->term.c_cc[VMIN] = 1;
+	shell->term.c_cc[VTIME] = 0;
+	tcsetattr(STDIN_FILENO, TCSANOW, &shell->term);
+}
 
-	if (argv == NULL)
-		return (0);
-	i = 0;
-	while (argv[i] != NULL)
-		i++;
-	return (i);
+void	turn_on(t_shell *shell)
+{
+	tcsetattr(STDIN_FILENO, TCSANOW, &shell->rest);
 }

@@ -1,25 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   e_utils.c                                          :+:      :+:    :+:   */
+/*   litter.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/03/01 18:06:37 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/31 14:53:17 by ezachari         ###   ########.fr       */
+/*   Created: 2021/03/31 17:44:24 by gesperan          #+#    #+#             */
+/*   Updated: 2021/03/31 19:29:44 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int		get_argv_size(char **argv)
+void	mover(char **fmt, int *sig)
 {
-	int i;
+	if (*sig == 0)
+		*fmt += 1;
+	*sig = 0;
+}
 
-	if (argv == NULL)
-		return (0);
-	i = 0;
-	while (argv[i] != NULL)
-		i++;
-	return (i);
+void	itiswhatitis(int ret)
+{
+	if (ret == 1)
+	{
+		ft_putendl_fd("syntax error near unexpected token", 1);
+		g_shell.status = 258;
+	}
+}
+
+void	moverr(int *i, int *sig)
+{
+	if (*sig == 0)
+		*i += 1;
+	*sig = 0;
 }

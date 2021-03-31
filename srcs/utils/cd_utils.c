@@ -1,31 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   e_error.c                                          :+:      :+:    :+:   */
+/*   cd_utils.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/03/01 14:48:35 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/31 14:53:07 by ezachari         ###   ########.fr       */
+/*   Created: 2021/03/31 17:17:24 by ezachari          #+#    #+#             */
+/*   Updated: 2021/03/31 17:17:30 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void		print_error(char *error, char *ext, char *cmd, int flag)
+void	set_pwd_env(char *pwd, char *oldpwd, t_shell *shell)
 {
-	ft_putstr_fd(error, STDERR_FILENO);
-	if (flag)
+	if (pwd)
 	{
-		ft_putendl_fd(strerror(errno), STDERR_FILENO);
-		return ;
+		if (get_env("PWD", shell) == NULL)
+			envp_add_back(&shell->env, new_elem(ft_strdup("PWD"),
+			ft_strdup(pwd)));
+		else
+			set_env("PWD", ft_strdup(pwd), shell);
 	}
-	if (cmd)
-		ft_putstr_fd(cmd, STDERR_FILENO);
-	if (ext)
+	if (oldpwd)
 	{
-		ft_putendl_fd(ext, STDERR_FILENO);
-		return ;
+		if (get_env("OLDPWD", shell) == NULL)
+			envp_add_back(&shell->env, new_elem(ft_strdup("OLDPWD"),
+			ft_strdup(oldpwd)));
+		else
+			set_env("OLDPWD", ft_strdup(oldpwd), shell);
 	}
-	ft_putchar_fd('\n', STDERR_FILENO);
 }
