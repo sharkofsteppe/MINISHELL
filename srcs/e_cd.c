@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 14:44:48 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/28 17:39:34 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/30 13:26:06 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,9 @@ void	set_pwd_env(char *pwd, char *oldpwd, t_shell *shell)
 	if (pwd)
 	{
 		if (get_env("PWD", shell) == NULL)
-			envp_add_back(&shell->env, new_elem(ft_strdup("PWD"), ft_strdup(oldpwd)));
+			envp_add_back(&shell->env, new_elem(ft_strdup("PWD"), ft_strdup(pwd)));
 		else
-			set_env("PWD", ft_strdup(oldpwd), shell);
+			set_env("PWD", ft_strdup(pwd), shell);
 	}
 	if (oldpwd)
 	{

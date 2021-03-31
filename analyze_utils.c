@@ -6,7 +6,7 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/28 18:10:44 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/31 14:41:57 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/31 14:44:43 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,12 +93,10 @@ void	justuer(int *i, char *fmt, int *sig)
 {
 	char	c;
 	int		interuption;
-	int n;
 
 	c = fmt[*i];
 	(*i)++;
 	interuption = 0;
-	n = 0;
 	while (fmt[*i] != c)
 	{
 		if (fmt[*i] == '\\' && c != '\'')
@@ -107,10 +105,7 @@ void	justuer(int *i, char *fmt, int *sig)
 			interuption = 1;
 		}
 		if (interuption == 0)
-		{
 			(*i)++;
-
-		}
 		interuption = 0;
 	}
 	(*i)++;
