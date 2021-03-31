@@ -6,7 +6,7 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/28 17:56:00 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/29 19:38:55 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/31 13:49:36 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ int		checkrdr(char *fmt)
 		if (fmt[i] == '\\' && fmt[i + 1] != '\0')
 			onepush(&i, &sig);
 		if (fmt[i] == '"' || fmt[i] == '\'')
-			justuer(&i, fmt);
+			justuer(&i, fmt, &sig);
 		disp(fmt, i, &ret);
 		if (sig == 0)
 			i++;

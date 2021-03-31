@@ -6,7 +6,7 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/28 18:10:44 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/29 19:37:08 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/31 14:41:57 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int		doublesym(char *fmt, char c, char k)
 		if (fmt[i] == '\\' && fmt[i + 1] != '\0')
 			onepush(&i, &sig);
 		if (fmt[i] == '"' || fmt[i] == '\'')
-			justuer(&i, fmt);
+			justuer(&i, fmt, &sig);
 		if (fmt[i] == c)
 		{
 			i++;
@@ -42,6 +42,8 @@ int		doublesym(char *fmt, char c, char k)
 				i++;
 			if (fmt[i] == k)
 				return (1);
+			else
+				return (0);
 		}
 		if (sig == 0)
 			i++;
@@ -87,12 +89,31 @@ int		findfirst(char *fmt)
 	return (fmt[i]);
 }
 
-void	justuer(int *i, char *fmt)
+void	justuer(int *i, char *fmt, int *sig)
 {
 	char	c;
+	int		interuption;
+	int n;
 
 	c = fmt[*i];
 	(*i)++;
+	interuption = 0;
+	n = 0;
 	while (fmt[*i] != c)
-		(*i)++;
+	{
+		if (fmt[*i] == '\\' && c != '\'')
+		{
+			(*i) += 2;
+			interuption = 1;
+		}
+		if (interuption == 0)
+		{
+			(*i)++;
+
+		}
+		interuption = 0;
+	}
+	(*i)++;
+	if (fmt[*i] == '\0')
+		(*sig) = 1;
 }

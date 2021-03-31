@@ -6,7 +6,7 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/28 18:11:35 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/29 19:32:40 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/03/31 13:49:21 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int		doublerdr(char *fmt)
 		if (fmt[i] == '\\' && fmt[i + 1] != '\0')
 			onepush(&i, &sig);
 		if (fmt[i] == '"' || fmt[i] == '\'')
-			justuer(&i, fmt);
+			justuer(&i, fmt, &sig);
 		if (fmt[i] == '>' && fmt[i + 1] == '>' && ret == 0)
 			ret = doublesym(&fmt[++i], '>', ';');
 		if (sig == 0)
@@ -65,7 +65,7 @@ int		doublerdrdeux(char *fmt)
 		if (fmt[i] == '\\' && fmt[i + 1] != '\0')
 			onepush(&i, &sig);
 		if (fmt[i] == '"' || fmt[i] == '\'')
-			justuer(&i, fmt);
+			justuer(&i, fmt, &sig);
 		if (fmt[i] == '>' && fmt[i + 1] == '>' && ret == 0)
 			ret = doublesym(&fmt[++i], '>', '|');
 		if (sig == 0)
