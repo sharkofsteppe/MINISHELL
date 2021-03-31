@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 14:16:02 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/31 19:43:03 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/31 19:57:30 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -207,7 +207,7 @@ int				rdr_error(char *file);
 int				check_type_0(t_list *tmp, int *i);
 int				check_type_1(t_list *tmp, int *i);
 int				check_type_2(t_list *tmp, int *i);
-void			rdr_clear(t_rdr **rdr, void (*del)(void*));
+void			rdr_clear(t_list **head, t_rdr **rdr, void (*del)(void*));
 void			set_pwd_env(char *pwd, char *oldpwd, t_shell *shell);
 t_envp			*new_elem(char *name, char *content);
 void			init_envp(char **envp, t_envp **head);

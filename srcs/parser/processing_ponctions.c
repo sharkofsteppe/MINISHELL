@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   processing_ponctions.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/28 20:05:28 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/31 19:52:06 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/31 20:03:40 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void	goparty(t_list **head, t_pt *p, t_shell *shell)
 			if (tmp->flag == 1)
 				run_pipeline(&tmp, shell);
 			else if (tmp->flag == 0)
-				run_cmd(tmp, shell);
+				shell->status = run_cmd(tmp, shell);
 			if (tmp)
 				tmp = tmp->next;
 			reset(shell);
@@ -66,6 +66,5 @@ void	goparty(t_list **head, t_pt *p, t_shell *shell)
 		if (tmp)
 			tmp = tmp->next;
 	}
-	rdr_clear(&(*head)->rdr_l, free);
-	ft_lstclear(head, free);
+	rdr_clear(head, &(*head)->rdr_l, free);
 }

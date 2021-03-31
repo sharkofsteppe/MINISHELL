@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   rdr_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 15:47:06 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/31 19:01:40 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/31 19:56:54 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ t_rdr	*new_rdr(char *file, int type, int flag)
 	return (new);
 }
 
-void	rdr_clear(t_rdr **rdr, void (*del)(void*))
+void	rdr_clear(t_list **head, t_rdr **rdr, void (*del)(void*))
 {
 	t_rdr *tmp;
 	t_rdr *begin;
@@ -80,4 +80,5 @@ void	rdr_clear(t_rdr **rdr, void (*del)(void*))
 		begin = tmp;
 	}
 	*rdr = NULL;
+	ft_lstclear(head, free);
 }
