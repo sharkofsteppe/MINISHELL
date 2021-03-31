@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/28 20:05:28 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/31 19:29:53 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/03/31 19:52:06 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,5 +66,6 @@ void	goparty(t_list **head, t_pt *p, t_shell *shell)
 		if (tmp)
 			tmp = tmp->next;
 	}
+	rdr_clear(&(*head)->rdr_l, free);
 	ft_lstclear(head, free);
 }
