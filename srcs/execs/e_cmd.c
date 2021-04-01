@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   e_cmd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 16:51:43 by ezachari          #+#    #+#             */
-/*   Updated: 2021/04/01 21:02:33 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/04/01 23:51:48 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ int		check_builtin(char *cmd)
 void	wait_pid(int *status, t_shell *shell)
 {
 	wait(status);
-	if (WIFEXITED(*status))
+	if (*status > 255)
 		shell->status = WEXITSTATUS(*status);
 	waitpid(-1, status, 0);
 }

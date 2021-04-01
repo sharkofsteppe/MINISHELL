@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/10 18:45:02 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/31 19:03:00 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/04/02 00:19:26 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,23 +31,28 @@ void	black_box(char **name, char **content, char **nname, char **ncontent)
 void	sort_envp1(t_envp **envp)
 {
 	t_envp	*env;
-
+	int		check;
+	int		index;
+	
 	env = *envp;
-	while (env)
+	check = 1;
+	while (check == 1)
 	{
-		if (env->next)
+		check = 0;
+		while(env->next)
 		{
-			if (env->name[0] == env->next->name[0])
+			index = 0;
+			while(env->name[index] &&
+			env->name[index] == env->next->name[index])
+				index++;
+			if (env->name[index] > env->next->name[index])
 			{
-				if (env->name[1] > env->next->name[1])
-					black_box(&env->name, &env->content,
-					&env->next->name, &env->next->content);
-			}
-			else if (env->name[0] > env->next->name[0])
+				check = 1;
 				black_box(&env->name, &env->content,
 				&env->next->name, &env->next->content);
+			}
+			env = env->next;
 		}
-		env = env->next;
 	}
 }
 
