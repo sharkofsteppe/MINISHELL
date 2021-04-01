@@ -6,7 +6,7 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/28 18:10:44 by gesperan          #+#    #+#             */
-/*   Updated: 2021/04/01 16:06:46 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/04/01 21:41:07 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ int		doublesym(char *fmt, char c, char k)
 		if (fmt[i] == c)
 		{
 			i++;
+			sig = 1;
 			while (fmt[i] == ' ')
 				i++;
 			if (fmt[i] == k)

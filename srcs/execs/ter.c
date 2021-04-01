@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ter.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 19:13:09 by ezachari          #+#    #+#             */
-/*   Updated: 2021/04/01 21:11:13 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/04/01 21:12:30 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ char	*readline(t_shell *shell)
 
 	line = NULL;
 	print_promt();
+	tputs(save_cursor, 1, put_int);
 	ft_bzero(shell->buf, MAXBUF);
 	while (1)
 	{
