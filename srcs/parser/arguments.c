@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   arguments.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/28 18:34:41 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/31 19:29:29 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/04/01 16:08:05 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,11 +70,11 @@ char	*qarg(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 			str = ecrqarg(str, p);
 		if (*str == '$' && *(str + 1) == '?')
 			str = questarg(str, tmp, p);
-		if (*str == '$' && *(str + 1) != '\\')
+		if (*str == '$' && dol_sym(*(str + 1)))
 			str = dollarqarg(++str, tmp, p, shell);
 		if (*str == '"')
 			break ;
-		if (*str != '\\' && (*str != '$' && *(str + 1) != '?'))
+		if (*str != '\\')
 		{
 			del = p->safe;
 			p->safe = ft_joinsym(p->safe, *str);
@@ -120,7 +120,7 @@ char	*argumentas(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 		return (ecrarg(str, tmp, p));
 	if (*str == '$' && *(str + 1) == '?')
 		return (questarg(str, tmp, p));
-	if (*str == '$' && *(str + 1) != '\\')
+	if (*str == '$' && dol_sym(*(str + 1)))
 		return (dollararg(++str, tmp, p, shell));
 	del = p->safe;
 	p->safe = ft_joinsym(p->safe, *str);

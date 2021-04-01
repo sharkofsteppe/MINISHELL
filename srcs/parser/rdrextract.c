@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   rdrextract.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/28 15:50:18 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/31 19:30:14 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/04/01 15:28:24 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ char	*redirectas(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 		return (ecrrdr(str, tmp, p));
 	if (*str == '$' && *(str + 1) == '?')
 		return (questrdr(str, tmp, p));
-	if (*str == '$' && *(str + 1) != '\\')
+	if (*str == '$' && dol_sym(*(str + 1)))
 		return (dollarrdr(++str, tmp, p, shell));
 	if (*str != ' ')
 		str = rec_sym(str, p);

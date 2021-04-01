@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   rdrponctions.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/28 16:34:04 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/31 19:30:13 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/04/01 15:28:32 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ char	*qrdr(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 			str = ecrqrdr(str, p);
 		if (*str == '$' && *(str + 1) == '?')
 			str = questrdr(str, tmp, p);
-		if (*str == '$' && *(str + 1) != '\\')
+		if (*str == '$' && dol_sym(*(str + 1)))
 			str = dollarrdr(++str, tmp, p, shell);
 		if (*str == '"')
 			break ;

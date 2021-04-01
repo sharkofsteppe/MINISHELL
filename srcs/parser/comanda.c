@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   comanda.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/28 19:35:59 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/31 19:29:39 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/04/01 15:26:31 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ char	*qun(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 	{
 		if (*str == '\\')
 			str = ecrq(str, tmp);
-		if (*str == '$' && *(str + 1) != '\\')
+		if (*str == '$' && dol_sym(*(str + 1)))
 			str = dollar(++str, tmp, p, shell);
 		if (*str == '"')
 			break ;
@@ -110,7 +110,7 @@ char	*comandas(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 		return (ecr(str, tmp));
 	if (*str == '$' && *(str + 1) == '?')
 		return (quest(str, tmp));
-	if (*str == '$' && *(str + 1) != '\\' && *(str + 1) != '\0')
+	if (*str == '$' && dol_sym(*(str + 1)))
 		return (dollar(++str, tmp, p, shell));
 	del = tmp->cmd;
 	tmp->cmd = ft_joinsym(tmp->cmd, *str);
