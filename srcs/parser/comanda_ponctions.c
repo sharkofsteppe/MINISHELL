@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   comanda_ponctions.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/28 19:52:20 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/31 19:29:34 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/04/01 20:29:50 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,21 @@ int		dol_sym(char c)
 		c == ' ' || c == '$' || c == '=')
 		return (0);
 	return (1);
+}
+
+void	lower(t_pt *p, t_list *tmp)
+{
+	int	i;
+	int	len;
+
+	i = 0;
+	len = ft_strlen(tmp->cmd);
+	p->cmd = 1;
+	while (i < len)
+	{
+		tmp->cmd[i] = ft_tolower(tmp->cmd[i]);
+		i++;
+	}
 }
 
 char	*ecrq(char *str, t_list *tmp)

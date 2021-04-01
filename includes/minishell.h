@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 14:16:02 by ezachari          #+#    #+#             */
-/*   Updated: 2021/04/01 20:23:17 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/04/01 20:56:39 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,6 +155,7 @@ char			*ecr(char *str, t_list *tmp);
 int				dol_sym(char c);
 char			*quest(char *str, t_list *tmp);
 char			*ecrq(char *str, t_list *tmp);
+void			lower(t_pt *p, t_list *tmp);
 
 int				processing(char *line, t_shell *shell);
 void			step_by_step(t_pt *p, t_list **head, t_shell *shell);
