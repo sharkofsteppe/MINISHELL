@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 18:01:27 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/31 17:41:34 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/04/01 20:50:32 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,12 @@
 void	fill_cont(t_list *tmp, char *filename, int flag)
 {
 	tmp->outfile = filename;
+	tmp->out_type = flag;
+}
+
+void	fill_cont1(t_list *tmp, char *filename, int flag)
+{
+	tmp->infile = filename;
 	tmp->out_type = flag;
 }
 
@@ -32,7 +38,7 @@ int		chose_rdr(t_list *tmp)
 			else if (tp->type == 2)
 				fill_cont(tmp, tp->filename, O_CREAT | O_WRONLY | O_TRUNC);
 			else if (tp->type == 3)
-				fill_cont(tmp, tp->filename, O_RDONLY);
+				fill_cont1(tmp, tp->filename, O_RDONLY);
 			tp = tp->next;
 		}
 	}

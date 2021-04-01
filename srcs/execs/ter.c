@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 19:13:09 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/31 19:36:38 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/04/01 20:45:45 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,6 @@ char	*readline(t_shell *shell)
 
 	line = NULL;
 	print_promt();
-	tputs(save_cursor, 1, put_int);
 	ft_bzero(shell->buf, MAXBUF);
 	while (1)
 	{

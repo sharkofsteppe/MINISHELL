@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 16:51:43 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/31 18:54:42 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/04/01 20:54:32 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int		run_builtin(char *cmd, char **argv, t_shell *shell)
 		return (builtin_export(argv, shell));
 	else
 		return (builtin_unset(argv, shell));
-	return (EXIT_FAILURE);
+	return (127);
 }
 
 int		check_builtin(char *cmd)
@@ -48,6 +48,14 @@ int		check_builtin(char *cmd)
 	else if (ft_strncmp(cmd, "unset", 6) == 0)
 		return (1);
 	return (0);
+}
+
+void	wait_pid(int *status, t_shell *shell)
+{
+	wait(status);
+	if (WIFEXITED(*status))
+		shell->status = WEXITSTATUS(*status);
+	waitpid(-1, status, 0);
 }
 
 char	**add_cmd_to_arg(char **arg, char *cmd)
@@ -77,6 +85,8 @@ int		run_cmd(t_list *tmp, t_shell *shell)
 	int		status;
 	int		check;
 
+	signal(SIGINT, child_int);
+	signal(SIGQUIT, child_quit);
 	if (prep_rdr(tmp) == 1)
 		return (EXIT_FAILURE);
 	check = check_builtin(tmp->cmd);
@@ -90,12 +100,9 @@ int		run_cmd(t_list *tmp, t_shell *shell)
 		if ((pid = fork()) < 0)
 			exit(EXIT_FAILURE);
 		if (pid == 0)
-		{
-			shell->status = run_solo_cmd(tmp, shell);
-			exit(EXIT_FAILURE);
-		}
-		else
-			waitpid(pid, &status, 0);
+			run_solo_cmd(tmp, shell);
+		wait_pid(&status, shell);
+		close_rdr(tmp->infile, tmp->outfile);
 	}
-	return (EXIT_SUCCESS);
+	return (shell->status);
 }

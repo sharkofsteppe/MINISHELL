@@ -64,14 +64,14 @@ ${NAME}: ${OBJS} ${HEADERS} ${LIBFT} Makefile
 ${MAKES}:
 	@${MAKE} -sC ${LIBFTDIR}
 %.o : %.c ${HEADERS}
-	@${CC} -c ${CFLAGS} ${INCL} $< -o $@
+	${CC} -c ${CFLAGS} ${INCL} $< -o $@
 ${LIBFT}:
 	@${MAKE} -sC ${LIBFTDIR}
 clean:
 	@${MAKE} -sC ${LIBFTDIR} clean
-	@${RM} -f ${OBJS}
+	${RM} -f ${OBJS}
 fclean: clean
 	@${MAKE} -sC ${LIBFTDIR} fclean
-	@${RM} -f ${NAME}
+	${RM} -f ${NAME}
 re:	fclean all
 .PHONY: all clean fclean re

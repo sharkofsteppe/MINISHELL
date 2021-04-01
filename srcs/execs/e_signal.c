@@ -6,36 +6,23 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 15:57:51 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/31 18:38:50 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/04/01 19:56:31 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "libft.h"
 
-void	handle_main(int sig)
+void	child_int(int sig)
 {
-	if (sig == SIGINT)
-	{
-		ft_putstr_fd("\b\b  \b\b", STDOUT_FILENO);
-		ft_putstr_fd("\n", STDERR_FILENO);
-		print_promt();
-		signal(SIGINT, handle_main);
-	}
-	else if (sig == SIGQUIT)
-		ft_putstr_fd("\b\b  \b\b", STDOUT_FILENO);
+	(void)sig;
+	g_shell.status = 130;
+	ft_putstr_fd("\n", STDERR_FILENO);
 }
 
-void	handle_child(int sig)
+void	child_quit(int sig)
 {
-	if (sig == SIGINT)
-	{
-		ft_putstr_fd("\n", STDERR_FILENO);
-		signal(SIGINT, handle_main);
-	}
-	if (sig == SIGQUIT)
-	{
-		ft_putstr_fd("Quit: 3\n", STDERR_FILENO);
-		signal(SIGQUIT, handle_main);
-	}
+	g_shell.status = 131;
+	ft_putstr_fd("Quit: ", STDERR_FILENO);
+	ft_putnbr_fd(sig, STDERR_FILENO);
+	ft_putstr_fd("\n", STDERR_FILENO);
 }

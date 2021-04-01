@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   processing_ponctions.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/28 20:05:28 by gesperan          #+#    #+#             */
-/*   Updated: 2021/04/01 16:11:53 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/04/01 20:32:34 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,11 +57,11 @@ void	goparty(t_list **head, t_pt *p, t_shell *shell)
 		{
 			if (tmp->flag == 1)
 				run_pipeline(&tmp, shell);
-			else if (tmp->flag == 0)
+			if (tmp->flag == 0)
 				shell->status = run_cmd(tmp, shell);
+			reset(shell);
 			if (tmp)
 				tmp = tmp->next;
-			reset(shell);
 		}
 		if (tmp)
 			tmp = tmp->next;

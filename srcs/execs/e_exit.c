@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 14:48:52 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/31 18:41:29 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/04/01 19:51:08 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,8 @@ void	exit_shell_with_args(t_shell *shell, char **argv)
 	{
 		if (!ft_isdigit(argv[1][i]) || len >= 19)
 		{
-			print_error("minibash: exit:", ": \
-			numeric argument required", argv[1], 0);
+			print_error("minibash: exit: ", ": numeric argument required", \
+			argv[1], 0);
 			exit_shell(shell, 255);
 		}
 		len++;

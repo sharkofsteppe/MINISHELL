@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   rdr_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 15:47:06 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/31 19:56:54 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/04/01 20:14:23 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ int		handle_rdr(t_list *tmp)
 			return (rdr_error(tmp->outfile));
 		dup2(tmp->fdout, STDOUT_FILENO);
 	}
-	close_rdr(tmp->fdin, tmp->fdout);
 	return (EXIT_SUCCESS);
 }
 

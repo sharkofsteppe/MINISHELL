@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 14:16:02 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/31 19:57:30 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/04/01 20:23:17 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -202,7 +202,7 @@ int				prep_rdr(t_list *tmp);
 t_rdr			*new_rdr(char *file, int type, int flag);
 void			rdr_add_back(t_rdr **rdr, t_rdr *new);
 int				handle_rdr(t_list *tmp);
-void			close_rdr(int fd1, int fd2);
+void			close_rdr(int *fd1, int *fd2);
 int				rdr_error(char *file);
 int				check_type_0(t_list *tmp, int *i);
 int				check_type_1(t_list *tmp, int *i);
@@ -221,16 +221,15 @@ int				check_argv(char **argv, int i, int *err);
 void			add_to_envp(char *name, t_shell *shell, char *fetch);
 void			print_export_err(int *err, char *name);
 void			add_to_envp1(int i, int *err, char **argv, t_shell *shell);
-int				exec_pipe(t_list *cmd, t_shell *shell);
-int				run_pipe_cmd(t_list *cmd, t_shell *shell, int input, int out);
+void			exec_pipe(t_list *cmd, t_shell *shell);
+void			run_pipe_cmd(t_list *cmd, t_shell *shell, int input, int out);
 void			run_pipeline(t_list **cmd, t_shell *shell);
 char			*search_bin_err(char **split, char *line);
 char			*search_bin(char *bin, t_shell *shell);
-int				run_solo_cmd(t_list *cmd, t_shell *shell);
+void			run_solo_cmd(t_list *cmd, t_shell *shell);
 char			**add_cmd_to_arg(char **arg, char *cmd);
 int				check_builtin(char *cmd);
 int				run_builtin(char *cmd, char **argv, t_shell *shell);
-void			close_rdr(int fd1, int fd2);
 int				rdr_error(char *file);
 int				check_term(int argc, char **argv, t_shell *shell);
 void			turn_off(t_shell *shell);
@@ -245,4 +244,8 @@ void			handle_backspace(t_shell *shell);
 char			**history_add(char **old, char *new_line, t_shell *shell);
 void			add_to_history(char *line, t_shell *shell);
 char			*readline(t_shell *shell);
+int				cmd_error(char *cmd);
+void			child_int(int sig);
+void			child_quit(int sig);
+void			wait_pid(int *status, t_shell *shell);
 #endif
