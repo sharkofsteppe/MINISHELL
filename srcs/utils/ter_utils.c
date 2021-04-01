@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 19:15:01 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/31 19:15:06 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/04/01 21:09:33 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 void	turn_off(t_shell *shell)
 {
+	ft_bzero(&shell->term, sizeof(struct termios));
 	tcgetattr(STDIN_FILENO, &shell->term);
 	shell->term.c_lflag &= ~(ICANON | ECHO);
 	shell->term.c_cc[VMIN] = 1;

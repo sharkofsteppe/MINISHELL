@@ -5,7 +5,7 @@ LIBFTDIR=	libft/
 UTILSDIR=	srcs/utils/
 PARSERDIR=	srcs/parser/
 LIBFT	=	${LIBFTDIR}libft.a
-HEADERS	=	${addprefix includes/,		minishell.h}
+HEADERS	=	includes/minishell.h libft/libft.h
 SRCS	=	${addprefix ${SRCDIR},		minishell.c}
 EXCS	=	${addprefix ${EXECSDIR},	e_cd.c \
 										e_echo.c \

@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/24 15:15:48 by gesperan          #+#    #+#             */
-/*   Updated: 2021/04/01 20:55:03 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/04/01 21:11:20 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,10 +42,9 @@ int		main(int argc, char **argv, char **env)
 {
 	char	*line;
 
-	(void)argc;
-	(void)argv;
 	init_gshell();
 	init_envp(env, &g_shell.env);
+	g_shell.status = check_term(argc, argv, &g_shell);
 	while (1)
 	{
 		turn_off(&g_shell);
