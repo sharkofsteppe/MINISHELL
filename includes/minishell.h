@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 14:16:02 by ezachari          #+#    #+#             */
-/*   Updated: 2021/04/01 20:56:39 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/04/02 00:55:48 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -217,7 +217,7 @@ int				set_env(char *name, char *new, t_shell *shell);
 void			envp_clear(t_envp **env, void (*del)(void*));
 int				envpsize_2(t_envp *envp);
 int				envpsize(t_envp *envp);
-int				check_name(char *name, char **argv, int i, int *err);
+int				check_name(char *name, int *err);
 int				check_argv(char **argv, int i, int *err);
 void			add_to_envp(char *name, t_shell *shell, char *fetch);
 void			print_export_err(int *err, char *name);

@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 14:45:41 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/31 18:38:24 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/04/02 00:56:04 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ void	black_box_envp(char **argv, int *err, t_shell *shell)
 		{
 			t.name = ft_substr(argv[t.i], 0, ft_strlen(argv[t.i]) -
 			ft_strlen(ft_strchr(argv[t.i], '=')));
-			if (check_name(t.name, argv, t.i, err) == EXIT_FAILURE)
+			if (check_name(t.name, err) == EXIT_FAILURE)
 				continue ;
 			add_to_envp(t.name, shell, ft_strchr(argv[t.i], '='));
 		}
