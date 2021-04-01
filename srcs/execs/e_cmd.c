@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   e_cmd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 16:51:43 by ezachari          #+#    #+#             */
-/*   Updated: 2021/04/01 20:54:32 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/04/01 21:02:33 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ int		run_cmd(t_list *tmp, t_shell *shell)
 		if (pid == 0)
 			run_solo_cmd(tmp, shell);
 		wait_pid(&status, shell);
-		close_rdr(tmp->infile, tmp->outfile);
+		close_rdr(&tmp->fdin, &tmp->fdout);
 	}
 	return (shell->status);
 }
