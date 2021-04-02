@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 16:51:43 by ezachari          #+#    #+#             */
-/*   Updated: 2021/04/02 14:05:53 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/04/02 18:12:09 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,8 @@ char	**add_cmd_to_arg(char **arg, char *cmd)
 	if (!arg)
 		arg = (char **)ft_calloc(1, sizeof(char *));
 	size = get_argv_size(arg);
-	new = (char **)ft_calloc((size + 2), sizeof(char *));
+	if (!(new = (char **)ft_calloc((size + 2), sizeof(char *))))
+		return (NULL);
 	new[j++] = ft_strdup(cmd);
 	while (arg[++i] != NULL)
 		new[j++] = ft_strdup(arg[i]);
@@ -101,8 +102,8 @@ int		run_cmd(t_list *tmp, t_shell *shell)
 			exit(EXIT_FAILURE);
 		if (pid == 0)
 			run_solo_cmd(tmp, shell);
-		close_rdr(&tmp->fdin, &tmp->fdout);
 		wait_pid(&status, shell);
+		close_rdr(&tmp->fdin, &tmp->fdout);
 	}
 	return (shell->status);
 }

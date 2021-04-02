@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   argument_ponctions.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/28 18:49:03 by gesperan          #+#    #+#             */
-/*   Updated: 2021/04/02 16:08:05 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/04/02 16:45:22 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ char	*dollarqarg(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 {
 	char	*del;
 	char	*dlr;
+
 	if (ft_isdigit(*str))
 		return (om_arg(str, tmp, p));
 	while (dol_sym(*str))

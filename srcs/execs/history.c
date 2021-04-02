@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 19:06:54 by ezachari          #+#    #+#             */
-/*   Updated: 2021/03/31 19:40:20 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/04/02 16:42:59 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,8 @@ char	**history_add(char **old, char *new_line, t_shell *shell)
 
 	i = -1;
 	count = get_argv_size(old);
-	new = (char **)ft_calloc(count + 2, sizeof(char *));
+	if (!(new = (char **)ft_calloc(count + 2, sizeof(char *))))
+		return (NULL);
 	if (count == 0)
 	{
 		new[++i] = ft_strdup(new_line);

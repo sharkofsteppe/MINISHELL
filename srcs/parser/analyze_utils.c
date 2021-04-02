@@ -3,14 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   analyze_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/28 18:10:44 by gesperan          #+#    #+#             */
-/*   Updated: 2021/04/02 16:30:16 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/04/02 17:27:34 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int		foo(char *fmt, char k, int *i)
+{
+	while (fmt[*i] == ' ')
+	{
+		(*i)++;
+		if (fmt[*i] == k)
+			return (1);
+	}
+	return (0);
+}
 
 int		doublesym(char *fmt, char c, char k)
 {
@@ -30,11 +41,9 @@ int		doublesym(char *fmt, char c, char k)
 			i++;
 			sig = 1;
 			while (fmt[i] == ' ')
-			{
 				i++;
-				if (fmt[i] == k)
-					return (1);
-			}
+			if (fmt[i] == k && fmt[i - 1] != '>')
+				return (1);
 		}
 		moverr(&i, &sig);
 	}

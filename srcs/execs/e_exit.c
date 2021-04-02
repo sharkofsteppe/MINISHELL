@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 14:48:52 by ezachari          #+#    #+#             */
-/*   Updated: 2021/04/02 16:09:48 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/04/02 16:45:59 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,9 @@ void	exit_shell(t_shell *shell, int err)
 void	check_exit_arg(char *arg, t_shell *shell)
 {
 	int		i;
+	char	*num;
 
+	num = ": numeric argument required";
 	i = 0;
 	while (arg[i] != '\0')
 	{
@@ -36,7 +38,7 @@ void	check_exit_arg(char *arg, t_shell *shell)
 			i++;
 		if ((!ft_isdigit(arg[i]) && arg[i] != '\0') || i > 19)
 		{
-			print_error("minibash: exit: ", ": numeric argument required", arg, 0);
+			print_error("minibash: exit: ", num, arg, 0);
 			exit_shell(shell, 255);
 		}
 	}

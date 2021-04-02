@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 18:07:59 by ezachari          #+#    #+#             */
-/*   Updated: 2021/04/02 13:55:49 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/04/02 17:11:56 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int		check_name(char *name, int *err)
 	i = -1;
 	while (name[++i] != '\0')
 	{
-		if (!ft_isalpha(name[i]) && name[i] != '_')
+		if (!ft_isalpha(name[i]) && !ft_isdigit(name[i]) && name[i] != '_')
 		{
 			free(name);
 			*err = 1;

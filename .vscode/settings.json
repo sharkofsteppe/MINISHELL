@@ -13,6 +13,7 @@
         "utility": "c",
         "vector": "c",
         "typeinfo": "c",
-        "sstream": "c"
+        "sstream": "c",
+        "libft.h": "c"
     }
 }
