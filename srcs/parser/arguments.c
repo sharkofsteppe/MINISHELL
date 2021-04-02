@@ -6,7 +6,7 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/28 18:34:41 by gesperan          #+#    #+#             */
-/*   Updated: 2021/04/01 16:08:05 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/04/02 16:11:19 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ char	*dollararg(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 		return (om_arg(str, tmp, p));
 	while (dol_sym(*str))
 	{
+		printf("sdfg\n");
 		del = p->dlr;
 		p->dlr = ft_joinsym(p->dlr, *str);
 		free(del);
@@ -64,23 +65,25 @@ char	*qarg(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 {
 	char	*del;
 
+	iter = 0;
 	while (*str != '"')
 	{
 		if (*str == '\\')
 			str = ecrqarg(str, p);
 		if (*str == '$' && *(str + 1) == '?')
 			str = questarg(str, tmp, p);
-		if (*str == '$' && dol_sym(*(str + 1)))
+		if (*str == '$' && dol_sym(*(str + 1)) && p->n == 0)
 			str = dollarqarg(++str, tmp, p, shell);
 		if (*str == '"')
 			break ;
-		if (*str != '\\')
+		if (*str != '\\' && p->n == 0)
 		{
 			del = p->safe;
 			p->safe = ft_joinsym(p->safe, *str);
 			free(del);
 			str++;
 		}
+		p->n = 0;
 	}
 	rec_argq(str, tmp, p);
 	return (++str);

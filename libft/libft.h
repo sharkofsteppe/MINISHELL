@@ -6,7 +6,7 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 14:33:16 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/31 19:22:19 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/04/02 15:50:52 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ typedef struct		s_pt
 	char	*safe;
 	char	*dlr;
 	int		q;
+	int		n;
 }					t_pt;
 
 enum				e_errorlist

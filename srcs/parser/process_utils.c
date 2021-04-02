@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   process_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/28 16:59:07 by gesperan          #+#    #+#             */
-/*   Updated: 2021/03/31 19:29:48 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/04/02 15:52:26 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ t_pt	*init_ptr(void)
 	ptr->q = 2;
 	ptr->safe = 0;
 	ptr->dlr = 0;
+	ptr->n = 0;
 	return (ptr);
 }
 

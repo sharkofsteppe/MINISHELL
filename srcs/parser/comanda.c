@@ -6,7 +6,7 @@
 /*   By: gesperan <gesperan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/28 19:35:59 by gesperan          #+#    #+#             */
-/*   Updated: 2021/04/01 20:29:24 by gesperan         ###   ########.fr       */
+/*   Updated: 2021/04/02 16:12:44 by gesperan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ char	*dollar(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 		free(del);
 	}
 	if (*str == ' ')
-		lower(p, tmp);
+		p->cmd = 1;
 	free(p->dlr);
 	p->dlr = 0;
 	return (str);
@@ -76,7 +76,7 @@ char	*qun(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 		}
 	}
 	if (*(str + 1) == ' ')
-		lower(p, tmp);
+		p->cmd = 1;
 	return (++str);
 }
 
@@ -94,7 +94,7 @@ char	*qdeux(char *str, t_list *tmp, t_pt *p)
 		str++;
 	}
 	if (*(str + 1) == ' ')
-		lower(p, tmp);
+		p->cmd = 1;
 	return (++str);
 }
 
@@ -117,6 +117,6 @@ char	*comandas(char *str, t_list *tmp, t_pt *p, t_shell *shell)
 	free(del);
 	str++;
 	if (*str == ' ' || *str == '>' || *str == '<' || *str == '\0')
-		lower(p, tmp);
+		p->cmd = 1;
 	return (str);
 }
