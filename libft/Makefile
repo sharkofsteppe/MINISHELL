@@ -1,7 +1,7 @@
 
 NAME = 				libft.a
 
-FLAGS = 			-c -Wall -Wextra -Werror
+FLAGS = 			-c -Wall -Wextra -Werror -g
 
 LIBFT = 		ft_atoi.c  ft_bzero.c  ft_substr.c ft_putchar_fd.c\
 				ft_calloc.c ft_isalnum.c ft_isalpha.c ft_isascii.c \

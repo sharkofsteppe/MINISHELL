@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 16:51:43 by ezachari          #+#    #+#             */
-/*   Updated: 2021/04/01 23:51:48 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/04/02 14:05:53 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,8 +101,8 @@ int		run_cmd(t_list *tmp, t_shell *shell)
 			exit(EXIT_FAILURE);
 		if (pid == 0)
 			run_solo_cmd(tmp, shell);
-		wait_pid(&status, shell);
 		close_rdr(&tmp->fdin, &tmp->fdout);
+		wait_pid(&status, shell);
 	}
 	return (shell->status);
 }

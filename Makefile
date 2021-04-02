@@ -55,7 +55,7 @@ OBJS	=	${SRCS:.c=.o} ${UTILS:.c=.o} ${PARSER:.c=.o} ${EXCS:.c=.o}
 LIBS	=	-ltermcap -Llibft -lft
 INCL	=	-Iincludes -Ilibft
 CC		=	gcc
-CFLAGS	=	-Wall -Wextra -Werror
+CFLAGS	=	-Wall -Wextra -Werror -g
 RM		=	rm
 MAKES	=	makes
 all: ${MAKES} ${NAME}

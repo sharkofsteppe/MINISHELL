@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 14:48:52 by ezachari          #+#    #+#             */
-/*   Updated: 2021/04/01 19:51:08 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/04/02 16:09:48 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,25 +21,40 @@ void	exit_shell(t_shell *shell, int err)
 	exit(err);
 }
 
-void	exit_shell_with_args(t_shell *shell, char **argv)
+void	check_exit_arg(char *arg, t_shell *shell)
+{
+	int		i;
+
+	i = 0;
+	while (arg[i] != '\0')
+	{
+		while (arg[i] == ' ')
+			i++;
+		if (arg[i] == '-')
+			i++;
+		while (ft_isdigit(arg[i]))
+			i++;
+		if ((!ft_isdigit(arg[i]) && arg[i] != '\0') || i > 19)
+		{
+			print_error("minibash: exit: ", ": numeric argument required", arg, 0);
+			exit_shell(shell, 255);
+		}
+	}
+}
+
+void	exit_shell_with_args(t_shell *shell, char **a, int count)
 {
 	unsigned char	err;
 	int				i;
-	int				len;
 
-	len = 0;
-	i = -1;
-	while (argv[1][++i] != '\0')
+	i = 0;
+	if (count > 2)
 	{
-		if (!ft_isdigit(argv[1][i]) || len >= 19)
-		{
-			print_error("minibash: exit: ", ": numeric argument required", \
-			argv[1], 0);
-			exit_shell(shell, 255);
-		}
-		len++;
+		print_error("minibash: exit: ", "too many arguments", 0, 0);
+		exit_shell(shell, 1);
 	}
-	err = ft_atoi(argv[1]);
+	check_exit_arg(a[1], shell);
+	err = ft_atoi(a[1]);
 	exit(err);
 }
 
@@ -50,7 +65,7 @@ int		builtin_exit(char **argv, t_shell *shell)
 	count = get_argv_size(argv);
 	ft_putendl_fd("exit", 1);
 	if (count > 1)
-		exit_shell_with_args(shell, argv);
+		exit_shell_with_args(shell, argv, count);
 	else if (count == 1)
 		exit_shell(shell, shell->status);
 	return (EXIT_FAILURE);

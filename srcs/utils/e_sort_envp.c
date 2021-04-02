@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/10 18:45:02 by ezachari          #+#    #+#             */
-/*   Updated: 2021/04/02 00:19:26 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/04/02 13:56:36 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,16 +33,16 @@ void	sort_envp1(t_envp **envp)
 	t_envp	*env;
 	int		check;
 	int		index;
-	
+
 	env = *envp;
 	check = 1;
 	while (check == 1)
 	{
 		check = 0;
-		while(env->next)
+		while (env->next)
 		{
 			index = 0;
-			while(env->name[index] &&
+			while (env->name[index] &&
 			env->name[index] == env->next->name[index])
 				index++;
 			if (env->name[index] > env->next->name[index])

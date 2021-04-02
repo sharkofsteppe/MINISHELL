@@ -6,7 +6,7 @@
 /*   By: ezachari <ezachari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/31 18:41:51 by ezachari          #+#    #+#             */
-/*   Updated: 2021/04/01 23:57:59 by ezachari         ###   ########.fr       */
+/*   Updated: 2021/04/02 14:06:47 by ezachari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ void	run_pipe_cmd(t_list *cmd, t_shell *shell, int input, int out)
 {
 	pid_t	pidc;
 	int		status;
-	
+
 	pidc = fork();
 	if (pidc < 0)
 		exit(EXIT_FAILURE);
@@ -96,7 +96,6 @@ void	run_pipe_cmd(t_list *cmd, t_shell *shell, int input, int out)
 void	run_pipeline(t_list **cmd, t_shell *shell)
 {
 	t_pip	t;
-	int		status;
 
 	signal(SIGINT, child_int);
 	signal(SIGQUIT, child_quit);
@@ -118,7 +117,7 @@ void	run_pipeline(t_list **cmd, t_shell *shell)
 		run_last_pipe(*cmd, shell);
 		close_rdr(&(*cmd)->fdin, &(*cmd)->fdout);
 	}
-	wait_pid(&status, shell);
+	wait_pid(&t.status, shell);
 	while ((*cmd) && (*cmd)->flag != 2)
 		*cmd = (*cmd)->next;
 }
